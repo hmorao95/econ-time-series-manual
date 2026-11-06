@@ -1,0 +1,42 @@
+# Book settings: https://jupyterbook.org/customize/config.html
+title: Economic Time Series in Python
+author: Hugo Morão
+copyright: "2026"
+only_build_toc_files: true
+
+repository:
+  url: https://github.com/hmorao95/econ-time-series-manual
+  branch: main
+
+html:
+  use_issues_button: true
+  use_repository_button: true
+  home_page_in_navbar: false
+
+launch_buttons:
+  colab_url: https://colab.research.google.com
+  notebook_interface: classic
+
+parse:
+  myst_enable_extensions:
+    - amsmath
+    - dollarmath
+    - html_image
+
+# Notebooks are stored with their outputs (scripts/execute_notebooks.py);
+# CI executes them separately with warnings as errors.
+execute:
+  execute_notebooks: "off"
+
+exclude_patterns:
+  - _build
+  - README.md
+  - AGENTS.md
+  - CLAUDE.md
+  - .venv
+  - .venv/**
+  - .pytest_cache
+  - .ruff_cache
+  - src
+  - tests
+  - scripts

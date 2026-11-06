@@ -1,7 +1,7 @@
 [project]
-name = "econ-time-series-manual"
-version = "0.1.0"
-description = "A practical manual on manipulating economic time series in Python: frequencies, growth rates, aggregation, interpolation, seasonal adjustment, detrending."
+name = "econts"
+version = "0.2.0"
+description = "Toolkit and handbook for manipulating economic time series in Python: growth rates, aggregation, disaggregation, seasonal adjustment, detrending, business cycles, crisis dummies."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
@@ -12,16 +12,32 @@ dependencies = [
     "scipy>=1.11",
     "statsmodels>=0.15",
     "matplotlib>=3.8",
-    # Paper figures in the mshipping house style (chapter 11), pinned by commit.
+]
+
+[project.optional-dependencies]
+# Everything the book's notebooks need beyond the toolkit (chapter 11 figures).
+book = [
     "housestyle @ git+https://github.com/hmorao95/housestyle@d147bdb9d0c8d377ef79100f3daddab274d17b6a",
 ]
 
 [project.urls]
+Book = "https://hmorao95.github.io/econ-time-series-manual"
 Repository = "https://github.com/hmorao95/econ-time-series-manual"
 
 [dependency-groups]
-dev = ["pytest>=8.1", "ruff>=0.4.8", "codespell>=2.2.6"]
-docs = ["mkdocs>=1.6,<2", "mkdocs-material>=9.5"]
+dev = [
+    "housestyle @ git+https://github.com/hmorao95/housestyle@d147bdb9d0c8d377ef79100f3daddab274d17b6a",
+    "pytest>=8.1",
+    "ruff>=0.4.8",
+    "codespell>=2.2.6",
+    "nbformat>=5.11.1",
+    "nbclient>=0.11.0",
+    "ipykernel>=7.3.0",
+]
+docs = [
+    "ghp-import>=2.1.0",
+    "jupyter-book>=1.0.4,<2",
+]
 
 [tool.uv]
 default-groups = ["dev", "docs"]
@@ -34,7 +50,7 @@ build-backend = "hatchling.build"
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/tsmanual"]
+packages = ["src/econts"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -47,9 +63,13 @@ select = ["E", "F", "W", "I", "B", "UP", "D"]
 ignore = ["D203", "D213"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["D"]
+"tests/*" = ["D", "E501"]
+"notebooks/**" = ["D", "E501", "E402", "B018", "B905", "B023", "E731", "I001", "F401"]
 "scripts/*" = ["D"]
 
 [tool.codespell]
-ignore-words-list = "trough"
-skip = "*.csv,*.lock,site"
+ignore-words-list = "trough,aer"
+skip = "*.csv,*.lock,*.ipynb,_build,site"
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 150
