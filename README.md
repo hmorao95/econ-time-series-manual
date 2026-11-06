@@ -22,7 +22,8 @@ as written on real US data (a bundled FRED snapshot).
 8. [Business cycles](docs/08-business-cycles.md) (BBQ turning points, phase statistics, stylized facts)
 9. [Diagnostics](docs/09-diagnostics.md) (ADF/KPSS, Zivot–Andrews, ACF/PACF, outliers)
 10. [Crisis dummies and recession bands](docs/10-crisis-dummies.md) (Portugal: grey bands, episode and slope dummies, event studies, Markov-switching probabilities)
-11. [Cheat sheet](docs/cheatsheet.md)
+11. [Paper-quality figures](docs/11-paper-figures.md) (SVAR impulse responses, comparisons, historical decompositions, drawn with [housestyle](https://github.com/hmorao95/housestyle))
+12. [Cheat sheet](docs/cheatsheet.md)
 
 The chapters read fine on GitHub. For the rendered site with search and
 math, build it locally (below).

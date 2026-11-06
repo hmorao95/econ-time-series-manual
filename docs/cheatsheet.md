@@ -90,6 +90,20 @@
 | Episode dummies | `pd.get_dummies(episode_label, dtype=float)` |
 | Recession probability | `sm.tsa.MarkovRegression(g, k_regimes=2).fit().smoothed_marginal_probabilities` |
 
+## Paper figures (`import housestyle as hs`)
+
+| Task | Code |
+|---|---|
+| Grid of panels | `fig, axes = hs.figure(2, 4)` |
+| Impulse response panel | `hs.irf(ax, h, med, lo, hi, "Title", "%", "Months")` |
+| Series k in house order | `hs.line(ax, x, y, k)` (1 black, 2 orange dashed, 3 green dash-dot) |
+| Band | `hs.band(ax, x, lo, hi)` |
+| Shaded episode / event | `hs.shade(ax, start, end)` / `hs.event(ax, x, y, "label")` |
+| Stacked decomposition | `hs.bars(ax, dates, contributions)` |
+| Labels, ticks, zero line | `hs.finish(ax, "Title", "Units", "Months")` |
+| 300 dpi export | `hs.export(fig, "name")` |
+| Cumulative IRF bands | `var.irf(24).cum_errband_mc(orth=True, signif=0.32)` |
+
 ## Diagnostics
 
 | Task | Code |

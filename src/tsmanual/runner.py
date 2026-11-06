@@ -2,7 +2,8 @@
 
 Conventions inside a chapter:
 
-* Fenced blocks tagged ``python`` run; any other tag (``text``, ``bash``) does not.
+* Fenced blocks tagged ``python`` run; any other tag (``py``, ``text``, ``bash``)
+  does not.
 * A block whose first line is ``# requires: <exe>`` is skipped when ``<exe>``
   is not on PATH (used for the X-13ARIMA-SEATS binary).
 * A block that contains a line ``# figure: <name>`` saves the current
@@ -56,6 +57,7 @@ def run_chapter(chapter: Path, figures: bool = False) -> list[str]:
     """
     namespace: dict[str, object] = {"__name__": "__chapter__"}
     skipped = []
+    plt.rcdefaults()  # a chapter may restyle matplotlib (housestyle does)
     plt.rcParams.update(STYLE)
     for i, code in enumerate(blocks(chapter), start=1):
         req = REQUIRES.match(code)
