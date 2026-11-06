@@ -179,6 +179,58 @@ The BN cycle of US GDP from a low-order AR is small and noisy: positive
 growth shocks raise the trend more than one for one. Kamber, Morley and Wong
 (2018) fix this by imposing a low signal-to-noise ratio (the "BN filter").
 
+## Bivariate Beveridge–Nelson and Blanchard–Quah
+
+A second variable that moves with the cycle, such as the unemployment rate,
+sharpens the split (Evans and Reichlin, 1994). Fit a VAR to output growth and
+unemployment, then:
+
+* **multivariate BN**: the trend is the long-run forecast of output from the
+  VAR, so the cycle is $c_t = -e_1' F (I-F)^{-1} Z_t$ with $F$ the companion
+  matrix and $Z_t$ the stacked, demeaned state;
+* **Blanchard–Quah (1989)**: identify two shocks by assuming only one of them
+  (the "supply" shock) moves output in the long run. The cycle is the
+  cumulated contribution of the other ("demand") shock.
+
+Both come from one VAR (EMT `BNBQbiv`, by Fabio Canova). Eight lags, as in
+Blanchard and Quah, on 1948–2019:
+
+```python
+u_q = load("UNRATE").resample("QS").mean()
+X = pd.DataFrame({"dy": y.diff(), "u": u_q}).loc["1948-04-01":"2019"].dropna()
+p, k = 8, 2
+var2 = sm.tsa.VAR(X).fit(p)
+
+# multivariate BN
+F = np.zeros((k * p, k * p))
+F[:k] = np.hstack(list(var2.coefs))
+F[k:, :-k] = np.eye(k * (p - 1))
+Z = pd.concat([(X - X.mean()).shift(j) for j in range(p)], axis=1)
+long_run = F @ np.linalg.inv(np.eye(k * p) - F)
+cyc_bn2 = -(Z @ long_run[0]).where(Z.notna().all(axis=1))
+
+# Blanchard-Quah: long-run impact matrix lower triangular
+A1 = np.eye(k) - var2.coefs.sum(axis=0)
+A1_inv = np.linalg.inv(A1)
+B0 = A1 @ np.linalg.cholesky(A1_inv @ var2.sigma_u @ A1_inv.T)  # u_t = B0 e_t
+B0[:, 1] *= np.sign(B0[0, 1])  # demand shock raises output on impact
+e = var2.resid.to_numpy() @ np.linalg.inv(B0).T
+theta = var2.ma_rep(len(e) - 1) @ B0  # structural MA coefficients
+demand = [np.einsum("j,j->", theta[: t + 1, 0, 1], e[t::-1, 1]) for t in range(len(e))]
+cyc_bq = pd.Series(np.cumsum(demand), index=var2.resid.index)
+
+bn_compare = pd.DataFrame(
+    {"BN univariate": cyc_bn, "BN bivariate": cyc_bn2, "BQ": cyc_bq}
+).dropna()
+print(bn_compare.groupby(rec.reindex(bn_compare.index)).mean().round(2))
+```
+
+The table shows the average cycle in expansions (0) and NBER recessions (1).
+The univariate BN cycle has the **wrong sign**: it is positive in
+recessions, because with output alone a fall in growth signals a lower
+trend. Adding unemployment fixes it: both bivariate cycles are negative in
+recessions, and BQ's is the larger.
+
 ## Haar wavelet filter
 
 Lubik, Matthes and Verona (2019) split a series with the Haar wavelet into
@@ -256,6 +308,8 @@ cycles = pd.DataFrame(
         "CF": cyc_cf,
         "BN": cyc_bn,
         "wavelet": cyc_wav,
+        "BN bivariate": cyc_bn2,
+        "BQ": cyc_bq,
     }
 )
 sample = cycles.loc["1960":"2019"]
@@ -311,7 +365,7 @@ ax.set_title("Output gap: with hindsight (HP) and in real time (one-sided HP)")
 | Real-time gap, early warning (credit gap) | one-sided HP, Hamilton |
 | Cycle with a specific periodicity | CF (full sample) or BK |
 | Structural interpretation, uncertainty bands | UC model |
-| Permanent vs transitory shocks | Beveridge–Nelson (and its BN filter variant) |
+| Permanent vs transitory shocks | Beveridge–Nelson (bivariate, or the BN filter); Blanchard–Quah |
 | Quick, one-sided frequency split | Haar wavelet |
 
 ## Pitfalls

@@ -8,13 +8,13 @@ as written on real US data.
 | Chapter | What you will find |
 |---|---|
 | [1. Dates and frequencies](01-dates-frequencies.md) | `Period` vs `Timestamp`, frequency aliases, gaps, business days, fiscal years, merging sources |
-| [2. Transformations](02-transformations.md) | growth rates (q/q, SAAR, y/y, Q4/Q4), carry-over, rebasing, deflating, splicing |
+| [2. Transformations](02-transformations.md) | growth rates (q/q, SAAR, y/y, Q4/Q4), carry-over, demeaning and scaling, rebasing, deflating, splicing |
 | [3. Temporal aggregation](03-aggregation.md) | flows vs stocks vs averages, incomplete periods, weekly → monthly, fiscal years |
 | [4. Interpolation and disaggregation](04-interpolation.md) | filling gaps, Kalman smoother, Denton, Chow–Lin, Fernández |
 | [5. Seasonal adjustment](05-seasonal-adjustment.md) | testing for seasonality, classical, STL, trading-day and Easter effects, X-13, MSTL |
-| [6. Detrending and filtering](06-detrending.md) | polynomial trends, HP (two- and one-sided), Hamilton, BK, CF, Beveridge–Nelson, wavelets, UC models |
+| [6. Detrending and filtering](06-detrending.md) | polynomial trends, HP (two- and one-sided), Hamilton, BK, CF, Beveridge–Nelson (uni- and bivariate), Blanchard–Quah, wavelets, UC models |
 | [7. Rolling windows and smoothing](07-rolling-smoothing.md) | moving averages, EWMA, 3m/3m, rolling volatility and regressions, lags and leads |
-| [8. Business cycles](08-business-cycles.md) | BBQ turning-point dating, phase statistics, stylized facts |
+| [8. Business cycles](08-business-cycles.md) | BBQ turning-point dating, phase statistics, stylized facts, robust skewness and kurtosis, a principal-component coincident index |
 | [9. Diagnostics](09-diagnostics.md) | ADF/KPSS, structural breaks, ACF/PACF, outliers |
 | [10. Crisis dummies and recession bands](10-crisis-dummies.md) | Portugal: reading a chronology, grey and hatched bands, episode and slope dummies, event studies, pulse/step dummies, Markov-switching probabilities |
 | [11. Paper-quality figures](11-paper-figures.md) | SVAR impulse responses with bands, specification comparisons, shaded time series and historical decompositions with `housestyle` |
@@ -62,7 +62,7 @@ bond yield and a quarterly Portuguese recession chronology
 
 Chapter 11 draws its figures with
 [housestyle](https://github.com/hmorao95/housestyle). Several recipes in
-chapters 3, 6, 7 and 8 port functions of Filippo Ferroni's
+chapters 2, 3, 6, 7 and 8 port functions of Filippo Ferroni's
 [Empirical Macro Toolbox](https://naffe15.github.io/EMT/) (MATLAB) to
 Python; its [function map](https://naffe15.github.io/_pages/function_map.html)
 lists the originals. Data: FRED, Federal Reserve Bank of St. Louis.
