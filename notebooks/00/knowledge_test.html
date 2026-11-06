@@ -1,0 +1,853 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Knowledge test &#8212; Economic Time Series in Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/00/knowledge_test';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Resources" href="resources.html" />
+    <link rel="prev" title="Cheat sheet" href="cheatsheet.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Economic Time Series in Python</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapters</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01/dates-frequencies.html">1. Dates, periods and frequencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02/transformations.html">2. Transformations: logs, growth rates, indices, deflators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03/aggregation.html">3. Temporal aggregation: from high to low frequency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04/interpolation.html">4. Interpolation and temporal disaggregation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05/seasonal-adjustment.html">5. Seasonal adjustment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06/detrending.html">6. Detrending and filtering: trend and cycle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../07/rolling-smoothing.html">7. Rolling windows, smoothing, lags and leads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../08/business-cycles.html">8. Business cycles: turning points and stylized facts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../09/diagnostics.html">9. Diagnostics: stationarity, autocorrelation, outliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../10/crisis-dummies.html">10. Crisis dummies and recession bands: Portugal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../11/paper-figures.html">11. Paper-quality figures: impulse responses and decompositions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="toolkit.html">The <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cheatsheet.html">Cheat sheet</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Knowledge test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/hmorao95/econ-time-series-manual" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/hmorao95/econ-time-series-manual/issues/new?title=Issue%20on%20page%20%2Fnotebooks/00/knowledge_test.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/notebooks/00/knowledge_test.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Knowledge test</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-1">Chapter 1</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-2">Chapter 2</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-3">Chapter 3</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-4">Chapter 4</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-5">Chapter 5</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-6">Chapter 6</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-7">Chapter 7</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-8">Chapter 8</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-9">Chapter 9</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-10">Chapter 10</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-11">Chapter 11</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="knowledge-test">
+<h1>Knowledge test<a class="headerlink" href="#knowledge-test" title="Link to this heading">#</a></h1>
+<p>Two multiple-choice questions per chapter; open each answer box to check your choice.</p>
+<section id="chapter-1">
+<h2>Chapter 1<a class="headerlink" href="#chapter-1" title="Link to this heading">#</a></h2>
+<p><strong>A monthly series has one month dropped from its index, so its <code class="docutils literal notranslate"><span class="pre">freq</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>. What does <code class="docutils literal notranslate"><span class="pre">s.pct_change()</span></code> report for the month after the gap?</strong></p>
+<ul class="simple">
+<li><p>A) <code class="docutils literal notranslate"><span class="pre">NaN</span></code>, because pandas detects the missing month</p></li>
+<li><p>B) The change over two months, computed against the last row present, with nothing to flag the gap</p></li>
+<li><p>C) An error, because the index is irregular</p></li>
+<li><p>D) The change against an interpolated value for the missing month</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>B</p>
+</div>
+<p><strong>You join <code class="docutils literal notranslate"><span class="pre">UNRATE</span></code> (months stamped on the first day) with a payrolls file whose months are stamped on the last day, and the inner join is empty. What is the robust fix?</strong></p>
+<ul class="simple">
+<li><p>A) Join with <code class="docutils literal notranslate"><span class="pre">how=&quot;outer&quot;</span></code> and forward-fill the gaps</p></li>
+<li><p>B) Subtract <code class="docutils literal notranslate"><span class="pre">pd.offsets.MonthEnd(1)</span></code> from the second index</p></li>
+<li><p>C) Resample both series to daily frequency before joining</p></li>
+<li><p>D) Convert both indexes to monthly periods with <code class="docutils literal notranslate"><span class="pre">.to_period(&quot;M&quot;)</span></code> and join on those</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>D</p>
+</div>
+</section>
+<section id="chapter-2">
+<h2>Chapter 2<a class="headerlink" href="#chapter-2" title="Link to this heading">#</a></h2>
+<p><strong>Which statement about annual GDP growth rates is correct?</strong></p>
+<ul class="simple">
+<li><p>A) Growth of the annual average (the press figure) and Q4-over-Q4 growth (used in FOMC projections) answer different questions and can differ by more than a percentage point</p></li>
+<li><p>B) Average-over-average and Q4/Q4 growth are always equal for data at a seasonally adjusted annual rate</p></li>
+<li><p>C) Q4/Q4 growth is the growth of the sum of the four quarters</p></li>
+<li><p>D) Average-over-average growth uses only the fourth quarter of each year</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>A</p>
+</div>
+<p><strong>The 2020Q2 fall in US real GDP is −28.0% at an annualized rate but −32.8 in annualized log points. What should you take from this?</strong></p>
+<ul class="simple">
+<li><p>A) One of the two numbers is a data error</p></li>
+<li><p>B) Log differences are always larger in absolute value than exact rates, so they are the safer choice</p></li>
+<li><p>C) The log approximation is poor for large changes: report exact rates and use log differences inside models</p></li>
+<li><p>D) Annualizing is not valid for quarters with negative growth</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>C</p>
+</div>
+</section>
+<section id="chapter-3">
+<h2>Chapter 3<a class="headerlink" href="#chapter-3" title="Link to this heading">#</a></h2>
+<p><strong>You need quarterly values of a monthly stock, such as government debt outstanding. Which aggregation rule do the quick rules recommend?</strong></p>
+<ul class="simple">
+<li><p>A) <code class="docutils literal notranslate"><span class="pre">sum</span></code></p></li>
+<li><p>B) <code class="docutils literal notranslate"><span class="pre">mean</span></code></p></li>
+<li><p>C) <code class="docutils literal notranslate"><span class="pre">last</span></code> (the end-of-period value)</p></li>
+<li><p>D) <code class="docutils literal notranslate"><span class="pre">first</span></code></p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>C</p>
+</div>
+<p><strong>Why aggregate monthly retail sales with <code class="docutils literal notranslate"><span class="pre">resample(&quot;QS&quot;).sum(min_count=3)</span></code> rather than <code class="docutils literal notranslate"><span class="pre">.sum()</span></code>?</strong></p>
+<ul class="simple">
+<li><p>A) It converts the quarterly total to an annual rate</p></li>
+<li><p>B) Plain <code class="docutils literal notranslate"><span class="pre">sum</span></code> returns a total for a quarter with only one or two months of data (and 0 for an empty one); <code class="docutils literal notranslate"><span class="pre">min_count=3</span></code> returns <code class="docutils literal notranslate"><span class="pre">NaN</span></code> instead</p></li>
+<li><p>C) It drops quarters with fewer than three seasonal factors</p></li>
+<li><p>D) Plain <code class="docutils literal notranslate"><span class="pre">sum</span></code> propagates <code class="docutils literal notranslate"><span class="pre">NaN</span></code>, and <code class="docutils literal notranslate"><span class="pre">min_count</span></code> makes it skip missing values</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>B</p>
+</div>
+</section>
+<section id="chapter-4">
+<h2>Chapter 4<a class="headerlink" href="#chapter-4" title="Link to this heading">#</a></h2>
+<p><strong>Why is <code class="docutils literal notranslate"><span class="pre">gdp_q.resample(&quot;MS&quot;).interpolate()</span></code> the wrong way to build monthly GDP from quarterly GDP?</strong></p>
+<ul class="simple">
+<li><p>A) It cannot handle data at a seasonally adjusted annual rate</p></li>
+<li><p>B) It only works on a <code class="docutils literal notranslate"><span class="pre">PeriodIndex</span></code></p></li>
+<li><p>C) It extrapolates beyond the last published quarter</p></li>
+<li><p>D) The monthly values it produces do not average back to the published quarterly values</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>D</p>
+</div>
+<p><strong>You run Chow–Lin and the estimated AR(1) coefficient of the errors sits at its upper bound. What does the chapter suggest?</strong></p>
+<ul class="simple">
+<li><p>A) The residual behaves like a random walk: use Fernández (ρ = 1), which is built for target and indicators that do not cointegrate</p></li>
+<li><p>B) The indicators fit perfectly, so Denton with a constant indicator will do as well</p></li>
+<li><p>C) Widen the bound to allow ρ &gt; 1 and re-estimate</p></li>
+<li><p>D) Disaggregate the growth rates instead of the levels</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>A</p>
+</div>
+</section>
+<section id="chapter-5">
+<h2>Chapter 5<a class="headerlink" href="#chapter-5" title="Link to this heading">#</a></h2>
+<p><strong>Why does the chapter seasonally adjust retail sales in logs?</strong></p>
+<ul class="simple">
+<li><p>A) STL accepts only positive inputs</p></li>
+<li><p>B) The seasonal swing grows with the level of the series, so the seasonality is multiplicative</p></li>
+<li><p>C) Taking logs removes trading-day effects</p></li>
+<li><p>D) The official adjusted series is published in logs</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>B</p>
+</div>
+<p><strong>STL tracks official seasonally adjusted retail sales closely in levels, but month-on-month changes differ by 1.7 pp on average. What does the chapter identify as the main source of the gap?</strong></p>
+<ul class="simple">
+<li><p>A) STL loses observations at both ends of the sample</p></li>
+<li><p>B) STL keeps the seasonal pattern fixed over time</p></li>
+<li><p>C) Calendar effects, such as the number of each weekday in a month and the date of Easter, which STL cannot see</p></li>
+<li><p>D) The official series uses an additive model</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>C</p>
+</div>
+</section>
+<section id="chapter-6">
+<h2>Chapter 6<a class="headerlink" href="#chapter-6" title="Link to this heading">#</a></h2>
+<p><strong>Why should a real-time output gap not be computed with the two-sided HP filter?</strong></p>
+<ul class="simple">
+<li><p>A) The trend at date t uses observations after t: at the end of the sample the trend is pulled toward the last observations, and the recent gap is revised as new data arrive</p></li>
+<li><p>B) λ = 1600 is only valid for annual data</p></li>
+<li><p>C) The two-sided HP filter loses 12 observations at each end</p></li>
+<li><p>D) The HP filter cannot be applied to logged data</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>A</p>
+</div>
+<p><strong>On US GDP, the univariate Beveridge–Nelson cycle from a low-order AR for growth is on average positive in NBER recessions. Why?</strong></p>
+<ul class="simple">
+<li><p>A) The AR is estimated on a sample that includes 2020</p></li>
+<li><p>B) The BN trend is a two-sided moving average that uses future data</p></li>
+<li><p>C) BN measures the growth cycle rather than the classical cycle</p></li>
+<li><p>D) Growth is positively autocorrelated, so a fall in growth lowers the long-run forecast (the trend) by more than it lowers output, leaving output above trend</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>D</p>
+</div>
+</section>
+<section id="chapter-7">
+<h2>Chapter 7<a class="headerlink" href="#chapter-7" title="Link to this heading">#</a></h2>
+<p><strong>Which of these can safely be used as a regressor in a forecasting model?</strong></p>
+<ul class="simple">
+<li><p>A) <code class="docutils literal notranslate"><span class="pre">jobs.rolling(13,</span> <span class="pre">center=True).mean()</span></code></p></li>
+<li><p>B) The Christiano–Fitzgerald cycle of the series, estimated on the full sample</p></li>
+<li><p>C) <code class="docutils literal notranslate"><span class="pre">jobs.rolling(12).mean()</span></code>, a trailing average</p></li>
+<li><p>D) Any of them, as long as <code class="docutils literal notranslate"><span class="pre">min_periods</span></code> is set</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>C</p>
+</div>
+<p><strong>In the 3m/3m annualized rate <code class="docutils literal notranslate"><span class="pre">100</span> <span class="pre">*</span> <span class="pre">((avg3</span> <span class="pre">/</span> <span class="pre">avg3.shift(3))</span> <span class="pre">**</span> <span class="pre">4</span> <span class="pre">-</span> <span class="pre">1)</span></code>, why is the exponent 4?</strong></p>
+<ul class="simple">
+<li><p>A) There are about four weeks in a month</p></li>
+<li><p>B) The ratio compares two averages three months apart, and a year has four such three-month spans</p></li>
+<li><p>C) It cumulates the last four monthly changes</p></li>
+<li><p>D) It converts a quarterly rate into a monthly one</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>B</p>
+</div>
+</section>
+<section id="chapter-8">
+<h2>Chapter 8<a class="headerlink" href="#chapter-8" title="Link to this heading">#</a></h2>
+<p><strong>You run the BBQ algorithm on HP-filtered GDP instead of the level of log GDP. What are you dating?</strong></p>
+<ul class="simple">
+<li><p>A) The same classical cycle, with less noise</p></li>
+<li><p>B) Exactly the NBER recessions</p></li>
+<li><p>C) Expansions only, because detrending removes the troughs</p></li>
+<li><p>D) The growth cycle (deviations from trend), a different object with more turning points</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>D</p>
+</div>
+<p><strong>Adding the 2020 quarters to US GDP growth raises classical kurtosis from 4.7 to 20.7, while Moors’ octile-based kurtosis does not move. What is the lesson?</strong></p>
+<ul class="simple">
+<li><p>A) Classical moments are dominated by a few extreme observations, so report a quantile-based measure next to the classical one</p></li>
+<li><p>B) Moors’ kurtosis is biased toward its normal value of 3</p></li>
+<li><p>C) GDP growth has become normally distributed since 2020</p></li>
+<li><p>D) Quantile-based measures cannot detect fat tails</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>A</p>
+</div>
+</section>
+<section id="chapter-9">
+<h2>Chapter 9<a class="headerlink" href="#chapter-9" title="Link to this heading">#</a></h2>
+<p><strong>For log GDP with a trend, ADF gives p = 0.60 and KPSS gives p = 0.01. What do you conclude?</strong></p>
+<ul class="simple">
+<li><p>A) Stationary: both tests reject</p></li>
+<li><p>B) Unclear: the two tests disagree</p></li>
+<li><p>C) Unit root: ADF does not reject its null of a unit root and KPSS rejects its null of stationarity</p></li>
+<li><p>D) Trend-stationary with a structural break</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>C</p>
+</div>
+<p><strong>Why does the outlier detector use the rolling median and the median absolute deviation (MAD) rather than the mean and standard deviation?</strong></p>
+<ul class="simple">
+<li><p>A) They are faster to compute on rolling windows</p></li>
+<li><p>B) Outliers inflate the mean and standard deviation and so hide themselves; the median and MAD are not dragged along by them</p></li>
+<li><p>C) The MAD equals the standard deviation for any distribution</p></li>
+<li><p>D) The median removes seasonality from the window</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>B</p>
+</div>
+</section>
+<section id="chapter-10">
+<h2>Chapter 10<a class="headerlink" href="#chapter-10" title="Link to this heading">#</a></h2>
+<p><strong>Which dummy fits a one-quarter shock, such as a lockdown quarter?</strong></p>
+<ul class="simple">
+<li><p>A) A pulse dummy: 0 0 1 0 0</p></li>
+<li><p>B) A step dummy: 0 0 1 1 1</p></li>
+<li><p>C) A ramp: 0 0 1 2 3</p></li>
+<li><p>D) A slope dummy: the recession indicator interacted with GDP growth</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>A</p>
+</div>
+<p><strong>The Portuguese recession chronology ends in 2020Q4 and your data run to 2026Q2. How should the indicator be treated after 2020Q4?</strong></p>
+<ul class="simple">
+<li><p>A) Set it to 0, since no recession has been declared</p></li>
+<li><p>B) Forward-fill its last value</p></li>
+<li><p>C) Set it to 1 in quarters of negative GDP growth</p></li>
+<li><p>D) Leave it <code class="docutils literal notranslate"><span class="pre">NaN</span></code>: the state is unknown, so drop those quarters or extend the chronology explicitly</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>D</p>
+</div>
+</section>
+<section id="chapter-11">
+<h2>Chapter 11<a class="headerlink" href="#chapter-11" title="Link to this heading">#</a></h2>
+<p><strong>In the oil SVAR, the real oil price, industrial production and CPI enter in log differences × 100 and unemployment in levels. To show effects on levels you should:</strong></p>
+<ul class="simple">
+<li><p>A) Cumulate all four responses</p></li>
+<li><p>B) Cumulate the responses of oil, industrial production and CPI, and plot unemployment’s response as it is</p></li>
+<li><p>C) Cumulate only the unemployment response</p></li>
+<li><p>D) Cumulate nothing, since the responses are already in levels</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>B</p>
+</div>
+<p><strong>A recursive (Cholesky) SVAR gives a tight 68% band around an impulse response. What does the band tell you?</strong></p>
+<ul class="simple">
+<li><p>A) That the ordering of the variables is correct</p></li>
+<li><p>B) That 68% of future shocks will produce responses inside it</p></li>
+<li><p>C) The sampling uncertainty of the estimate given the identification, and nothing about whether the ordering is right</p></li>
+<li><p>D) That the response is significant at the 5% level</p></li>
+</ul>
+<div class="note dropdown admonition">
+<p class="admonition-title">Answer</p>
+<p>C</p>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks/00"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="cheatsheet.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Cheat sheet</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="resources.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Resources</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-1">Chapter 1</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-2">Chapter 2</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-3">Chapter 3</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-4">Chapter 4</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-5">Chapter 5</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-6">Chapter 6</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-7">Chapter 7</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-8">Chapter 8</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-9">Chapter 9</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-10">Chapter 10</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-11">Chapter 11</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Hugo Morão
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

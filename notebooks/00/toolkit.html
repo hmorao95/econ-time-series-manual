@@ -1,0 +1,911 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>The econts toolkit &#8212; Economic Time Series in Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/00/toolkit';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Cheat sheet" href="cheatsheet.html" />
+    <link rel="prev" title="11. Paper-quality figures: impulse responses and decompositions" href="../11/paper-figures.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Economic Time Series in Python</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapters</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01/dates-frequencies.html">1. Dates, periods and frequencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02/transformations.html">2. Transformations: logs, growth rates, indices, deflators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03/aggregation.html">3. Temporal aggregation: from high to low frequency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04/interpolation.html">4. Interpolation and temporal disaggregation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05/seasonal-adjustment.html">5. Seasonal adjustment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06/detrending.html">6. Detrending and filtering: trend and cycle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../07/rolling-smoothing.html">7. Rolling windows, smoothing, lags and leads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../08/business-cycles.html">8. Business cycles: turning points and stylized facts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../09/diagnostics.html">9. Diagnostics: stationarity, autocorrelation, outliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../10/crisis-dummies.html">10. Crisis dummies and recession bands: Portugal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../11/paper-figures.html">11. Paper-quality figures: impulse responses and decompositions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">The <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cheatsheet.html">Cheat sheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="knowledge_test.html">Knowledge test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/hmorao95/econ-time-series-manual" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/hmorao95/econ-time-series-manual/issues/new?title=Issue%20on%20page%20%2Fnotebooks/00/toolkit.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/notebooks/00/toolkit.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>The econts toolkit</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#command-line">Command line</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-econts">Data: <code class="docutils literal notranslate"><span class="pre">econts</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transformations-econts-transform">Transformations: <code class="docutils literal notranslate"><span class="pre">econts.transform</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aggregation-econts-aggregate">Aggregation: <code class="docutils literal notranslate"><span class="pre">econts.aggregate</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#disaggregation-econts-disagg">Disaggregation: <code class="docutils literal notranslate"><span class="pre">econts.disagg</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#seasonal-adjustment-econts-seasonal">Seasonal adjustment: <code class="docutils literal notranslate"><span class="pre">econts.seasonal</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trend-and-cycle-econts-filters">Trend and cycle: <code class="docutils literal notranslate"><span class="pre">econts.filters</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#business-cycles-econts-cycles">Business cycles: <code class="docutils literal notranslate"><span class="pre">econts.cycles</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dummies-and-bands-econts-dummies">Dummies and bands: <code class="docutils literal notranslate"><span class="pre">econts.dummies</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diagnostics-econts-diagnostics">Diagnostics: <code class="docutils literal notranslate"><span class="pre">econts.diagnostics</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#svar-helpers-econts-svar">SVAR helpers: <code class="docutils literal notranslate"><span class="pre">econts.svar</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="the-econts-toolkit">
+<h1>The <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit<a class="headerlink" href="#the-econts-toolkit" title="Link to this heading">#</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">econts</span></code> packages the recipes of this book as functions for your own
+projects. All of them take and return pandas objects.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/hmorao95/econ-time-series-manual
+</pre></div>
+</div>
+<p>Pin a commit or tag for reproducible projects, e.g.
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;econts</span> <span class="pre">&#64;</span> <span class="pre">git+https://github.com/hmorao95/econ-time-series-manual&#64;&lt;commit&gt;&quot;</span></code>.
+Each function has a docstring (<code class="docutils literal notranslate"><span class="pre">help(econts.filters.hamilton_filter)</span></code>).</p>
+<section id="command-line">
+<h2>Command line<a class="headerlink" href="#command-line" title="Link to this heading">#</a></h2>
+<p>Installing the toolkit also installs an <code class="docutils literal notranslate"><span class="pre">econts</span></code> command (python-fire), for
+shell scripts or Stata/MATLAB pipelines. A source is a CSV file (first column
+dates) or a FRED id; results print, or go to a CSV with <code class="docutils literal notranslate"><span class="pre">--out</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>econts<span class="w"> </span>series<span class="w">                                            </span><span class="c1"># bundled FRED ids</span>
+econts<span class="w"> </span>load<span class="w"> </span>GDPC1<span class="w"> </span>--out<span class="w"> </span>gdp.csv
+econts<span class="w"> </span>growth<span class="w"> </span>CPIAUCSL<span class="w"> </span>--kind<span class="w"> </span>yoy
+econts<span class="w"> </span>aggregate<span class="w"> </span>PAYEMS<span class="w"> </span>--freq<span class="w"> </span>QS<span class="w"> </span>--how<span class="w"> </span>mean
+econts<span class="w"> </span>filter<span class="w"> </span>gdp.csv<span class="w"> </span>--log<span class="w"> </span>--method<span class="w"> </span>hamilton<span class="w"> </span>--out<span class="w"> </span>cycle.csv
+econts<span class="w"> </span>disagg<span class="w"> </span>GDPC1<span class="w"> </span>--indicators<span class="w"> </span>INDPRO,PAYEMS<span class="w"> </span>--method<span class="w"> </span>chow-lin<span class="w"> </span>--out<span class="w"> </span>gdp_m.csv
+econts<span class="w"> </span>seasonal<span class="w"> </span>RSXFSN<span class="w"> </span>--calendar<span class="w"> </span>--out<span class="w"> </span>sales_sa.csv
+econts<span class="w"> </span>bbq<span class="w"> </span>GDPC1<span class="w"> </span>--log
+econts<span class="w"> </span>unitroot<span class="w"> </span>UNRATE
+econts<span class="w"> </span>outliers<span class="w"> </span>ICSA<span class="w"> </span>--log
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">econts</span> <span class="pre">&lt;command&gt;</span> <span class="pre">--help</span></code> lists every flag. Filter methods: <code class="docutils literal notranslate"><span class="pre">hp</span></code>, <code class="docutils literal notranslate"><span class="pre">hp1</span></code>
+(one-sided HP), <code class="docutils literal notranslate"><span class="pre">hamilton</span></code>, <code class="docutils literal notranslate"><span class="pre">bk</span></code>, <code class="docutils literal notranslate"><span class="pre">cf</span></code>, <code class="docutils literal notranslate"><span class="pre">bn</span></code>, <code class="docutils literal notranslate"><span class="pre">poly</span></code>, <code class="docutils literal notranslate"><span class="pre">haar</span></code>. Expected errors
+(a missing file, an unknown method) print one line and exit with code 1.</p>
+</section>
+<section id="data-econts">
+<h2>Data: <code class="docutils literal notranslate"><span class="pre">econts</span></code><a class="headerlink" href="#data-econts" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Does</p></th>
+<th class="head"><p>Chapter</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">load(series_id,</span> <span class="pre">online=False)</span></code></p></td>
+<td><p>bundled FRED snapshot, or any FRED series online</p></td>
+<td><p>all</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SERIES</span></code>, <code class="docutils literal notranslate"><span class="pre">DATA_DIR</span></code></p></td>
+<td><p>what is bundled, and where</p></td>
+<td><p>all</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="transformations-econts-transform">
+<h2>Transformations: <code class="docutils literal notranslate"><span class="pre">econts.transform</span></code><a class="headerlink" href="#transformations-econts-transform" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Does</p></th>
+<th class="head"><p>Chapter</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">growth(s,</span> <span class="pre">kind)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;pop&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;yoy&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;annualized&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;log&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;log_annualized&quot;</span></code>; never fills gaps</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">carry_over(q,</span> <span class="pre">year)</span></code></p></td>
+<td><p>statistical overhang</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rebase(s,</span> <span class="pre">base)</span></code></p></td>
+<td><p>index with base-period average = 100</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">deflate(nominal,</span> <span class="pre">prices)</span></code></p></td>
+<td><p>real series</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ratio_splice(old,</span> <span class="pre">new,</span> <span class="pre">at)</span></code></p></td>
+<td><p>link series with a level break</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">demean(s,</span> <span class="pre">by=None)</span></code></p></td>
+<td><p>full-sample or by-group demeaning (EMT <code class="docutils literal notranslate"><span class="pre">demean</span></code>)</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">within(df,</span> <span class="pre">value,</span> <span class="pre">unit,</span> <span class="pre">time=None)</span></code></p></td>
+<td><p>panel within and two-way transformations</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">zscore(s)</span></code>, <code class="docutils literal notranslate"><span class="pre">minmax(s)</span></code></p></td>
+<td><p>standardize, rescale to [0, 1]</p></td>
+<td><p>2</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="aggregation-econts-aggregate">
+<h2>Aggregation: <code class="docutils literal notranslate"><span class="pre">econts.aggregate</span></code><a class="headerlink" href="#aggregation-econts-aggregate" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Does</p></th>
+<th class="head"><p>Chapter</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">aggregate(s,</span> <span class="pre">freq,</span> <span class="pre">how,</span> <span class="pre">min_obs)</span></code></p></td>
+<td><p>resample with a minimum observation count</p></td>
+<td><p>3</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">weekly_to_monthly(w,</span> <span class="pre">how)</span></code></p></td>
+<td><p>split weeks across months by day</p></td>
+<td><p>3</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="disaggregation-econts-disagg">
+<h2>Disaggregation: <code class="docutils literal notranslate"><span class="pre">econts.disagg</span></code><a class="headerlink" href="#disaggregation-econts-disagg" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Does</p></th>
+<th class="head"><p>Chapter</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">denton(Y,</span> <span class="pre">indicator,</span> <span class="pre">m,</span> <span class="pre">how)</span></code></p></td>
+<td><p>proportional Denton benchmarking, with extrapolation</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">chow_lin(Y,</span> <span class="pre">X,</span> <span class="pre">m,</span> <span class="pre">how)</span></code></p></td>
+<td><p>GLS on indicators, AR(1) errors</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fernandez(Y,</span> <span class="pre">X,</span> <span class="pre">m,</span> <span class="pre">how)</span></code></p></td>
+<td><p>GLS on indicators, random-walk errors</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">agg_matrix(n_low,</span> <span class="pre">n_high,</span> <span class="pre">m,</span> <span class="pre">how)</span></code></p></td>
+<td><p>the aggregation matrix</p></td>
+<td><p>4</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="seasonal-adjustment-econts-seasonal">
+<h2>Seasonal adjustment: <code class="docutils literal notranslate"><span class="pre">econts.seasonal</span></code><a class="headerlink" href="#seasonal-adjustment-econts-seasonal" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Does</p></th>
+<th class="head"><p>Chapter</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">stl_adjust(s,</span> <span class="pre">calendar=False)</span></code></p></td>
+<td><p>robust STL in logs, optionally with trading-day and Easter effects</p></td>
+<td><p>5</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">calendar_regressors(index)</span></code></p></td>
+<td><p>weekday contrasts, month length, Easter</p></td>
+<td><p>5</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="trend-and-cycle-econts-filters">
+<h2>Trend and cycle: <code class="docutils literal notranslate"><span class="pre">econts.filters</span></code><a class="headerlink" href="#trend-and-cycle-econts-filters" title="Link to this heading">#</a></h2>
+<p>Each returns <code class="docutils literal notranslate"><span class="pre">(cycle,</span> <span class="pre">trend)</span></code>; apply to <code class="docutils literal notranslate"><span class="pre">100</span> <span class="pre">*</span> <span class="pre">log(level)</span></code>.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Does</p></th>
+<th class="head"><p>Chapter</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">poly_detrend(y,</span> <span class="pre">order,</span> <span class="pre">break_at)</span></code></p></td>
+<td><p>polynomial trend, optional break (EMT <code class="docutils literal notranslate"><span class="pre">polydet</span></code>, <code class="docutils literal notranslate"><span class="pre">polydet_break</span></code>)</p></td>
+<td><p>6</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hp(y,</span> <span class="pre">lamb)</span></code>, <code class="docutils literal notranslate"><span class="pre">hp_one_sided(y,</span> <span class="pre">lamb)</span></code></p></td>
+<td><p>two- and one-sided HP (EMT <code class="docutils literal notranslate"><span class="pre">one_sided_hpfilter_serial</span></code>)</p></td>
+<td><p>6</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hamilton_filter(y,</span> <span class="pre">h,</span> <span class="pre">p)</span></code></p></td>
+<td><p>Hamilton (2018) regression filter (EMT <code class="docutils literal notranslate"><span class="pre">hamfilter</span></code>)</p></td>
+<td><p>6</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bk(y)</span></code>, <code class="docutils literal notranslate"><span class="pre">cf(y)</span></code></p></td>
+<td><p>Baxter-King and Christiano-Fitzgerald band-pass</p></td>
+<td><p>6</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">beveridge_nelson(y,</span> <span class="pre">p)</span></code></p></td>
+<td><p>univariate BN (EMT <code class="docutils literal notranslate"><span class="pre">BNuniv</span></code>)</p></td>
+<td><p>6</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bn_bq_bivariate(y,</span> <span class="pre">z,</span> <span class="pre">p)</span></code></p></td>
+<td><p>bivariate BN and Blanchard-Quah (EMT <code class="docutils literal notranslate"><span class="pre">BNBQbiv</span></code>)</p></td>
+<td><p>6</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">haar_components(y)</span></code>, <code class="docutils literal notranslate"><span class="pre">haar_cycle(y)</span></code></p></td>
+<td><p>Haar wavelet details and cycle (EMT <code class="docutils literal notranslate"><span class="pre">wavefilter</span></code>)</p></td>
+<td><p>6</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="business-cycles-econts-cycles">
+<h2>Business cycles: <code class="docutils literal notranslate"><span class="pre">econts.cycles</span></code><a class="headerlink" href="#business-cycles-econts-cycles" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Does</p></th>
+<th class="head"><p>Chapter</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bbq(y,</span> <span class="pre">window,</span> <span class="pre">phase,</span> <span class="pre">cycle)</span></code></p></td>
+<td><p>Harding-Pagan turning points (EMT <code class="docutils literal notranslate"><span class="pre">date_</span></code>)</p></td>
+<td><p>8</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">phases(y,</span> <span class="pre">turning_points)</span></code>, <code class="docutils literal notranslate"><span class="pre">states(turning_points)</span></code></p></td>
+<td><p>phase durations and amplitudes, expansion indicator</p></td>
+<td><p>8</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cycle_moments(cycles,</span> <span class="pre">reference)</span></code></p></td>
+<td><p>std, relative std, AR(1), cross-correlations (EMT <code class="docutils literal notranslate"><span class="pre">autocor</span></code>)</p></td>
+<td><p>8</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">robust_skewness(s)</span></code>, <code class="docutils literal notranslate"><span class="pre">robust_kurtosis(s)</span></code></p></td>
+<td><p>classical and quantile-based moments (EMT <code class="docutils literal notranslate"><span class="pre">skewness_</span></code>, <code class="docutils literal notranslate"><span class="pre">kurtosis_</span></code>)</p></td>
+<td><p>8</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pc_factors(panel,</span> <span class="pre">n)</span></code></p></td>
+<td><p>principal-component factors, F’F/T = I (EMT <code class="docutils literal notranslate"><span class="pre">pc_T</span></code>)</p></td>
+<td><p>8</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">concordance(a,</span> <span class="pre">b)</span></code></p></td>
+<td><p>share of periods two chronologies agree</p></td>
+<td><p>10</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="dummies-and-bands-econts-dummies">
+<h2>Dummies and bands: <code class="docutils literal notranslate"><span class="pre">econts.dummies</span></code><a class="headerlink" href="#dummies-and-bands-econts-dummies" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Does</p></th>
+<th class="head"><p>Chapter</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">episodes(dummy)</span></code></p></td>
+<td><p>runs of ones as a table with start, end, length, peak</p></td>
+<td><p>10</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dummy_from_episodes(index,</span> <span class="pre">spans)</span></code></p></td>
+<td><p>dummy from a list of dates</p></td>
+<td><p>10</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">episode_labels(dummy)</span></code></p></td>
+<td><p>one label per episode, for <code class="docutils literal notranslate"><span class="pre">get_dummies</span></code> or <code class="docutils literal notranslate"><span class="pre">groupby</span></code></p></td>
+<td><p>10</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pulse</span></code>, <code class="docutils literal notranslate"><span class="pre">step</span></code>, <code class="docutils literal notranslate"><span class="pre">ramp</span></code>, <code class="docutils literal notranslate"><span class="pre">temporary_change</span></code></p></td>
+<td><p>outlier and break dummies</p></td>
+<td><p>10</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">shade(ax,</span> <span class="pre">dummy,</span> <span class="pre">**style)</span></code></p></td>
+<td><p>grey or hatched bands covering whole periods (EMT <code class="docutils literal notranslate"><span class="pre">shade</span></code>)</p></td>
+<td><p>6, 10</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="diagnostics-econts-diagnostics">
+<h2>Diagnostics: <code class="docutils literal notranslate"><span class="pre">econts.diagnostics</span></code><a class="headerlink" href="#diagnostics-econts-diagnostics" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Does</p></th>
+<th class="head"><p>Chapter</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">unit_root_table(series)</span></code></p></td>
+<td><p>ADF and KPSS with a joint verdict</p></td>
+<td><p>9</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">robust_zscore</span></code>, <code class="docutils literal notranslate"><span class="pre">robust_outliers</span></code></p></td>
+<td><p>rolling median and MAD outlier flags</p></td>
+<td><p>9</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">winsorize(s,</span> <span class="pre">lower,</span> <span class="pre">upper)</span></code></p></td>
+<td><p>clip at quantiles</p></td>
+<td><p>9</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="svar-helpers-econts-svar">
+<h2>SVAR helpers: <code class="docutils literal notranslate"><span class="pre">econts.svar</span></code><a class="headerlink" href="#svar-helpers-econts-svar" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Does</p></th>
+<th class="head"><p>Chapter</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">irf_with_bands(var,</span> <span class="pre">shock,</span> <span class="pre">cumulate,</span> <span class="pre">impact)</span></code></p></td>
+<td><p>Cholesky responses, scaled shock, Monte Carlo bands</p></td>
+<td><p>11</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">historical_decomposition(var)</span></code></p></td>
+<td><p>contribution of each shock, period by period</p></td>
+<td><p>11</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks/00"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../11/paper-figures.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">11. </span>Paper-quality figures: impulse responses and decompositions</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="cheatsheet.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Cheat sheet</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#command-line">Command line</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-econts">Data: <code class="docutils literal notranslate"><span class="pre">econts</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transformations-econts-transform">Transformations: <code class="docutils literal notranslate"><span class="pre">econts.transform</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aggregation-econts-aggregate">Aggregation: <code class="docutils literal notranslate"><span class="pre">econts.aggregate</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#disaggregation-econts-disagg">Disaggregation: <code class="docutils literal notranslate"><span class="pre">econts.disagg</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#seasonal-adjustment-econts-seasonal">Seasonal adjustment: <code class="docutils literal notranslate"><span class="pre">econts.seasonal</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trend-and-cycle-econts-filters">Trend and cycle: <code class="docutils literal notranslate"><span class="pre">econts.filters</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#business-cycles-econts-cycles">Business cycles: <code class="docutils literal notranslate"><span class="pre">econts.cycles</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dummies-and-bands-econts-dummies">Dummies and bands: <code class="docutils literal notranslate"><span class="pre">econts.dummies</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diagnostics-econts-diagnostics">Diagnostics: <code class="docutils literal notranslate"><span class="pre">econts.diagnostics</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#svar-helpers-econts-svar">SVAR helpers: <code class="docutils literal notranslate"><span class="pre">econts.svar</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Hugo Morão
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

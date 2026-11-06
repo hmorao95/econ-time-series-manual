@@ -1,0 +1,1100 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>8. Business cycles: turning points and stylized facts &#8212; Economic Time Series in Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/08/business-cycles';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="9. Diagnostics: stationarity, autocorrelation, outliers" href="../09/diagnostics.html" />
+    <link rel="prev" title="7. Rolling windows, smoothing, lags and leads" href="../07/rolling-smoothing.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../00/intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Economic Time Series in Python</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapters</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01/dates-frequencies.html">1. Dates, periods and frequencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02/transformations.html">2. Transformations: logs, growth rates, indices, deflators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03/aggregation.html">3. Temporal aggregation: from high to low frequency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04/interpolation.html">4. Interpolation and temporal disaggregation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05/seasonal-adjustment.html">5. Seasonal adjustment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06/detrending.html">6. Detrending and filtering: trend and cycle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../07/rolling-smoothing.html">7. Rolling windows, smoothing, lags and leads</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">8. Business cycles: turning points and stylized facts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../09/diagnostics.html">9. Diagnostics: stationarity, autocorrelation, outliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../10/crisis-dummies.html">10. Crisis dummies and recession bands: Portugal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../11/paper-figures.html">11. Paper-quality figures: impulse responses and decompositions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00/toolkit.html">The <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../00/cheatsheet.html">Cheat sheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../00/knowledge_test.html">Knowledge test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../00/resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/hmorao95/econ-time-series-manual/blob/main/notebooks/08/business-cycles.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/hmorao95/econ-time-series-manual" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/hmorao95/econ-time-series-manual/issues/new?title=Issue%20on%20page%20%2Fnotebooks/08/business-cycles.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/notebooks/08/business-cycles.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Business cycles: turning points and stylized facts</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dating-turning-points-the-bbq-algorithm">8.1. Dating turning points: the BBQ algorithm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phases-duration-and-amplitude">8.2. Phases: duration and amplitude</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stylized-facts-of-the-cycle">8.3. Stylized facts of the cycle</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#asymmetry-and-fat-tails-robust-moments">8.4. Asymmetry and fat tails: robust moments</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-common-cycle-from-many-indicators">8.5. A common cycle from many indicators</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfalls">8.6. Pitfalls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">8.7. Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">8.8. Exercises</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="business-cycles-turning-points-and-stylized-facts">
+<h1><span class="section-number">8. </span>Business cycles: turning points and stylized facts<a class="headerlink" href="#business-cycles-turning-points-and-stylized-facts" title="Link to this heading">#</a></h1>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Setup: install the toolkit when running on Google Colab, and a plotting style</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="k">if</span> <span class="s2">"google.colab"</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+    <span class="o">%</span><span class="k">pip</span> install -q "econts[book] @ git+https://github.com/hmorao95/econ-time-series-manual"
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    <span class="s2">"figure.figsize"</span><span class="p">:</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">3.6</span><span class="p">),</span> <span class="s2">"axes.grid"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"grid.alpha"</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="s2">"axes.spines.top"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"axes.spines.right"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"legend.frameon"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<p>Two classic descriptive exercises: <strong>dating</strong> the cycle (when did recessions
+start and end?) and <strong>summarizing</strong> it (how volatile, persistent and
+procyclical is each variable?).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">econts</span><span class="w"> </span><span class="kn">import</span> <span class="n">load</span>
+
+<span class="n">y</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="s2">"GDPC1"</span><span class="p">))</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="s2">"Q"</span><span class="p">)</span>
+<span class="n">rec</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"USRECQ"</span><span class="p">)</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="s2">"Q"</span><span class="p">)</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="dating-turning-points-the-bbq-algorithm">
+<h2><span class="section-number">8.1. </span>Dating turning points: the BBQ algorithm<a class="headerlink" href="#dating-turning-points-the-bbq-algorithm" title="Link to this heading">#</a></h2>
+<p>Harding and Pagan (2002) formalize the NBER’s rule of thumb. A quarter is a
+peak (trough) if it is the highest (lowest) point within two quarters on
+each side; peaks and troughs must alternate; a phase lasts at least two
+quarters and a full cycle at least five. This is a compact port of the BBQ
+routine in EMT’s <code class="docutils literal notranslate"><span class="pre">date_</span></code> (by James Engel, Adrian Pagan, Don Harding and
+Fabio Canova).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">bbq</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">phase</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cycle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Harding-Pagan turning points: +1 peak, -1 trough, 0 otherwise.</span>
+
+<span class="sd">    Defaults are for quarterly data; for monthly use window=5, phase=6,</span>
+<span class="sd">    cycle=15.</span>
+<span class="sd">    """</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="c1"># 1. local extrema</span>
+    <span class="n">tps</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">-</span> <span class="n">window</span><span class="p">):</span>
+        <span class="n">seg</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="n">window</span> <span class="p">:</span> <span class="n">t</span> <span class="o">+</span> <span class="n">window</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">==</span> <span class="n">seg</span><span class="o">.</span><span class="n">max</span><span class="p">():</span>
+            <span class="n">tps</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">t</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">v</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">==</span> <span class="n">seg</span><span class="o">.</span><span class="n">min</span><span class="p">():</span>
+            <span class="n">tps</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">t</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">alternate</span><span class="p">(</span><span class="n">tps</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Among consecutive peaks keep the highest; troughs, the lowest."""</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">tps</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">out</span> <span class="ow">and</span> <span class="n">out</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">k</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">v</span><span class="p">[</span><span class="n">out</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span> <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">v</span><span class="p">[</span><span class="n">out</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]]):</span>
+                    <span class="n">out</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">t</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+    <span class="c1"># 2. censoring: alternation, minimum phase, minimum cycle</span>
+    <span class="n">tps</span> <span class="o">=</span> <span class="n">alternate</span><span class="p">(</span><span class="n">tps</span><span class="p">)</span>
+    <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">while</span> <span class="n">changed</span><span class="p">:</span>
+        <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tps</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">tps</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">tps</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">phase</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">tps</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
+                <span class="n">tps</span><span class="p">,</span> <span class="n">changed</span> <span class="o">=</span> <span class="n">alternate</span><span class="p">(</span><span class="n">tps</span><span class="p">),</span> <span class="kc">True</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">changed</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tps</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">tps</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">tps</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">cycle</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">tps</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span>
+                <span class="n">tps</span><span class="p">,</span> <span class="n">changed</span> <span class="o">=</span> <span class="n">alternate</span><span class="p">(</span><span class="n">tps</span><span class="p">),</span> <span class="kc">True</span>
+                <span class="k">break</span>
+
+    <span class="c1"># 3. end rules: the first/last peak (trough) must not be exceeded</span>
+    <span class="c1">#    (undercut) between it and the edge of the sample</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">violates</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">rest</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">rest</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="p">(</span><span class="n">rest</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">v</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">rest</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">v</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+
+    <span class="k">while</span> <span class="n">tps</span> <span class="ow">and</span> <span class="n">violates</span><span class="p">(</span><span class="o">*</span><span class="n">tps</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">v</span><span class="p">[:</span> <span class="n">tps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]]):</span>
+        <span class="n">tps</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">tps</span> <span class="ow">and</span> <span class="n">violates</span><span class="p">(</span><span class="o">*</span><span class="n">tps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="n">tps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]):</span>
+        <span class="n">tps</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"turning_point"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">tps</span><span class="p">:</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+
+<span class="n">tp</span> <span class="o">=</span> <span class="n">bbq</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">nber_peaks</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">index</span><span class="p">[(</span><span class="n">rec</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)]</span>
+<span class="n">nber_troughs</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">index</span><span class="p">[(</span><span class="n">rec</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"BBQ peaks:   "</span><span class="p">,</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tp</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">tp</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"NBER peaks:  "</span><span class="p">,</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">nber_peaks</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"BBQ troughs: "</span><span class="p">,</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tp</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">tp</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"NBER troughs:"</span><span class="p">,</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">nber_troughs</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>BBQ peaks:    1948Q4 1953Q2 1957Q3 1960Q1 1969Q3 1973Q4 1980Q1 1981Q3 1990Q3 2008Q2 2019Q4
+NBER peaks:   1948Q4 1953Q2 1957Q3 1960Q2 1969Q4 1973Q4 1980Q1 1981Q3 1990Q3 2001Q1 2007Q4 2019Q4
+BBQ troughs:  1947Q3 1949Q2 1954Q1 1958Q1 1960Q4 1970Q4 1975Q1 1980Q3 1982Q1 1991Q1 2009Q2 2020Q2
+NBER troughs: 1949Q4 1954Q2 1958Q2 1961Q1 1970Q4 1975Q1 1980Q3 1982Q4 1991Q1 2001Q4 2009Q2 2020Q2
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.cycles import bbq, states
+</pre></div>
+</div>
+</div>
+<p>On GDP alone, BBQ recovers almost every NBER recession within a quarter.
+It misses 2001 (GDP never fell for two quarters in the current vintage) and
+dates the Great Recession peak in 2008Q2 rather than 2007Q4, because GDP
+kept growing into early 2008. The NBER looks at many monthly indicators,
+employment above all.</p>
+</section>
+<section id="phases-duration-and-amplitude">
+<h2><span class="section-number">8.2. </span>Phases: duration and amplitude<a class="headerlink" href="#phases-duration-and-amplitude" title="Link to this heading">#</a></h2>
+<p>From the turning points, build the expansion/contraction indicator and
+summarize each phase (EMT <code class="docutils literal notranslate"><span class="pre">states</span></code> and the statistics of <code class="docutils literal notranslate"><span class="pre">date_</span></code>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">phases</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">tp</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""One row per complete phase: type, start, end, duration, amplitude."""</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="n">tp</span><span class="p">[</span><span class="n">tp</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">k0</span><span class="p">),</span> <span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pts</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="nb">list</span><span class="p">(</span><span class="n">pts</span><span class="o">.</span><span class="n">items</span><span class="p">())[</span><span class="mi">1</span><span class="p">:]):</span>
+        <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">"phase"</span><span class="p">:</span> <span class="s2">"contraction"</span> <span class="k">if</span> <span class="n">k0</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">"expansion"</span><span class="p">,</span>
+                <span class="s2">"start"</span><span class="p">:</span> <span class="n">t0</span><span class="p">,</span>
+                <span class="s2">"end"</span><span class="p">:</span> <span class="n">t1</span><span class="p">,</span>
+                <span class="s2">"duration"</span><span class="p">:</span> <span class="p">(</span><span class="n">t1</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span><span class="o">.</span><span class="n">n</span><span class="p">,</span>  <span class="c1"># quarters</span>
+                <span class="s2">"amplitude"</span><span class="p">:</span> <span class="n">y</span><span class="p">[</span><span class="n">t1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span><span class="p">[</span><span class="n">t0</span><span class="p">],</span>  <span class="c1"># log points x 100 = %</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+
+
+<span class="n">ph</span> <span class="o">=</span> <span class="n">phases</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">tp</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ph</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">({</span><span class="s2">"amplitude"</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ph</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"phase"</span><span class="p">)[[</span><span class="s2">"duration"</span><span class="p">,</span> <span class="s2">"amplitude"</span><span class="p">]]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="c1"># expansion (1) / contraction (0) indicator, after EMT `states`</span>
+<span class="c1"># contraction = the quarters after a peak up to and including the trough,</span>
+<span class="c1"># the NBER convention (USRECQ starts recessions the quarter after the peak)</span>
+<span class="n">regime</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">()</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">regime</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>      phase  start    end  duration  amplitude
+  expansion 1991Q1 2008Q2        69       53.2
+contraction 2008Q2 2009Q2         4       -4.1
+  expansion 2009Q2 2019Q4        42       25.5
+contraction 2019Q4 2020Q2         2       -9.5
+             duration  amplitude
+phase                           
+contraction       2.9       -3.0
+expansion        23.5       22.8
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.cycles import phases
+</pre></div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ts</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ts</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">contr</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+    <span class="n">ts</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+    <span class="n">ts</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+    <span class="n">ts</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+    <span class="n">where</span><span class="o">=</span><span class="n">contr</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">"0.8"</span><span class="p">,</span>
+    <span class="n">step</span><span class="o">=</span><span class="s2">"post"</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">"BBQ contraction"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">ts</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">tp</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ts</span><span class="p">[</span><span class="n">tp</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">"v"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"C3"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"peak"</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">ts</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">tp</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">ts</span><span class="p">[</span><span class="n">tp</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+    <span class="s2">"^"</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">"C2"</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">"trough"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Log real GDP x 100 and BBQ turning points"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"upper left"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x265a359ae40&gt;
+</pre></div>
+</div>
+<img alt="../../_images/86a3d6bd6ea845545f1fbab2c7b34fba10f5bb31d3cf60e6a8d247fc97dcfbed.png" src="../../_images/86a3d6bd6ea845545f1fbab2c7b34fba10f5bb31d3cf60e6a8d247fc97dcfbed.png" />
+</div>
+</div>
+</section>
+<section id="stylized-facts-of-the-cycle">
+<h2><span class="section-number">8.3. </span>Stylized facts of the cycle<a class="headerlink" href="#stylized-facts-of-the-cycle" title="Link to this heading">#</a></h2>
+<p>The Kydland–Prescott table: for each variable’s cyclical component, its
+volatility (absolute and relative to GDP), persistence, and correlation with
+the GDP cycle at leads and lags (EMT <code class="docutils literal notranslate"><span class="pre">autocor</span></code>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">q</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">sid</span><span class="p">:</span> <span class="n">load</span><span class="p">(</span><span class="n">sid</span><span class="p">)</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="s2">"M"</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"Q"</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>  <span class="c1"># monthly -&gt; quarterly</span>
+<span class="n">levels</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">"GDP"</span><span class="p">:</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="s2">"GDPC1"</span><span class="p">)</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="s2">"Q"</span><span class="p">)),</span>
+        <span class="s2">"industrial production"</span><span class="p">:</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">q</span><span class="p">(</span><span class="s2">"INDPRO"</span><span class="p">)),</span>
+        <span class="s2">"payroll employment"</span><span class="p">:</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">q</span><span class="p">(</span><span class="s2">"PAYEMS"</span><span class="p">)),</span>
+        <span class="s2">"unemployment rate"</span><span class="p">:</span> <span class="n">q</span><span class="p">(</span><span class="s2">"UNRATE"</span><span class="p">),</span>  <span class="c1"># already in percent: no log</span>
+        <span class="s2">"GDP deflator"</span><span class="p">:</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="s2">"GDPDEF"</span><span class="p">)</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="s2">"Q"</span><span class="p">)),</span>
+    <span class="p">}</span>
+<span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"1960"</span><span class="p">:</span><span class="s2">"2019"</span><span class="p">]</span>
+
+<span class="n">cyc</span> <span class="o">=</span> <span class="n">levels</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">hpfilter</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">lamb</span><span class="o">=</span><span class="mi">1600</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="n">facts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">"std (%)"</span><span class="p">:</span> <span class="n">cyc</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span>
+        <span class="s2">"relative std"</span><span class="p">:</span> <span class="n">cyc</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">/</span> <span class="n">cyc</span><span class="p">[</span><span class="s2">"GDP"</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span>
+        <span class="s2">"AR(1)"</span><span class="p">:</span> <span class="n">cyc</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">autocorr</span><span class="p">()),</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]:</span>
+    <span class="c1"># corr(x[t+k], GDP[t]): high at k &lt; 0 means x leads GDP</span>
+    <span class="n">facts</span><span class="p">[</span><span class="sa">f</span><span class="s2">"corr x(t</span><span class="si">{</span><span class="n">k</span><span class="si">:</span><span class="s2">+d</span><span class="si">}</span><span class="s2">), GDP(t)"</span><span class="p">]</span> <span class="o">=</span> <span class="n">cyc</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">cyc</span><span class="p">[</span><span class="s2">"GDP"</span><span class="p">])</span>
+    <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">facts</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                       std (%)  relative std  AR(1)  corr x(t-4), GDP(t)  corr x(t-2), GDP(t)  corr x(t+0), GDP(t)  corr x(t+2), GDP(t)  corr x(t+4), GDP(t)
+GDP                       1.43          1.00   0.86                 0.24                 0.67                 1.00                 0.67                 0.24
+industrial production     3.07          2.14   0.89                 0.17                 0.57                 0.89                 0.67                 0.25
+payroll employment        1.27          0.89   0.95                -0.05                 0.37                 0.80                 0.88                 0.64
+unemployment rate         0.73          0.51   0.92                -0.10                -0.50                -0.86                -0.80                -0.43
+GDP deflator              0.76          0.53   0.94                -0.51                -0.56                -0.46                -0.24                 0.02
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.cycles import cycle_moments
+</pre></div>
+</div>
+</div>
+<p>Read it like this (1960–2019, HP cycles): industrial production is about
+twice as volatile as GDP and strongly procyclical. Payroll employment is
+procyclical and <strong>lags</strong> GDP: its correlation peaks at <span class="math notranslate nohighlight">\(x_{t+2}\)</span>. The
+unemployment rate is strongly countercyclical, mostly contemporaneously.
+The price level is countercyclical, most strongly a year <em>before</em> the GDP
+cycle (Kydland and Prescott, 1990, read this as evidence of supply shocks).</p>
+</section>
+<section id="asymmetry-and-fat-tails-robust-moments">
+<h2><span class="section-number">8.4. </span>Asymmetry and fat tails: robust moments<a class="headerlink" href="#asymmetry-and-fat-tails-robust-moments" title="Link to this heading">#</a></h2>
+<p>Are recessions sharper than expansions? Skewness and kurtosis answer that,
+but the classical estimators are dominated by a few extreme quarters.
+Quantile-based estimators are not (EMT <code class="docutils literal notranslate"><span class="pre">skewness_</span></code> and <code class="docutils literal notranslate"><span class="pre">kurtosis_</span></code>). Each
+has a known value under normality: 0 for every skewness measure; 3, 1.23,
+2.59 and 2.91 for the four kurtosis measures.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">robust_skewness</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="n">q1</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">q3</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">"classical"</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">skew</span><span class="p">(),</span>
+            <span class="s2">"Bowley (quartiles)"</span><span class="p">:</span> <span class="p">(</span><span class="n">q3</span> <span class="o">+</span> <span class="n">q1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">q2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">q3</span> <span class="o">-</span> <span class="n">q1</span><span class="p">),</span>
+            <span class="s2">"Groeneveld-Meeden"</span><span class="p">:</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="n">q2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">s</span> <span class="o">-</span> <span class="n">q2</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+            <span class="s2">"Kendall-Stuart"</span><span class="p">:</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="n">q2</span><span class="p">)</span> <span class="o">/</span> <span class="n">s</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">robust_kurtosis</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.375</span><span class="p">,</span> <span class="mf">0.625</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.875</span><span class="p">,</span> <span class="mf">0.975</span><span class="p">])</span>
+    <span class="n">v</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()),</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">tail</span><span class="p">,</span> <span class="n">half</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="mf">0.05</span> <span class="o">*</span> <span class="n">n</span><span class="p">)),</span> <span class="n">n</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">"classical"</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">kurt</span><span class="p">()</span> <span class="o">+</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s2">"Moors (octiles)"</span><span class="p">:</span> <span class="p">(</span><span class="n">q</span><span class="p">[</span><span class="mf">0.875</span><span class="p">]</span> <span class="o">-</span> <span class="n">q</span><span class="p">[</span><span class="mf">0.625</span><span class="p">]</span> <span class="o">+</span> <span class="n">q</span><span class="p">[</span><span class="mf">0.375</span><span class="p">]</span> <span class="o">-</span> <span class="n">q</span><span class="p">[</span><span class="mf">0.125</span><span class="p">])</span>
+            <span class="o">/</span> <span class="p">(</span><span class="n">q</span><span class="p">[</span><span class="mf">0.75</span><span class="p">]</span> <span class="o">-</span> <span class="n">q</span><span class="p">[</span><span class="mf">0.25</span><span class="p">]),</span>
+            <span class="s2">"Hogg"</span><span class="p">:</span> <span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="o">-</span><span class="n">tail</span><span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="n">v</span><span class="p">[:</span><span class="n">tail</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+            <span class="o">/</span> <span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="o">-</span><span class="n">half</span><span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="n">v</span><span class="p">[:</span><span class="n">half</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()),</span>
+            <span class="s2">"Crow-Siddiqui"</span><span class="p">:</span> <span class="p">(</span><span class="n">q</span><span class="p">[</span><span class="mf">0.975</span><span class="p">]</span> <span class="o">-</span> <span class="n">q</span><span class="p">[</span><span class="mf">0.025</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">q</span><span class="p">[</span><span class="mf">0.75</span><span class="p">]</span> <span class="o">-</span> <span class="n">q</span><span class="p">[</span><span class="mf">0.25</span><span class="p">]),</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span>  <span class="c1"># quarterly GDP growth, log points</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"to 2019"</span><span class="p">:</span> <span class="n">g</span><span class="p">[:</span><span class="s2">"2019"</span><span class="p">],</span> <span class="s2">"to 2026"</span><span class="p">:</span> <span class="n">g</span><span class="p">}</span>
+<span class="n">skew</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">robust_skewness</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+<span class="n">kurt</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">robust_kurtosis</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+<span class="n">kurt</span><span class="p">[</span><span class="s2">"normal"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mf">1.23</span><span class="p">,</span> <span class="mf">2.59</span><span class="p">,</span> <span class="mf">2.91</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">skew</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">kurt</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                    to 2019  to 2026
+classical             -0.09    -1.03
+Bowley (quartiles)     0.02    -0.03
+Groeneveld-Meeden      0.01    -0.01
+Kendall-Stuart         0.01    -0.01
+                 to 2019  to 2026  normal
+classical           4.65    20.67    3.00
+Moors (octiles)     1.71     1.73    1.23
+Hogg                3.12     3.55    2.59
+Crow-Siddiqui       3.89     4.23    2.91
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.cycles import robust_skewness, robust_kurtosis
+</pre></div>
+</div>
+</div>
+<p>Adding the 2020 quarters turns classical skewness from about 0 to −1 and
+multiplies classical kurtosis by four (4.7 to 20.7). The quantile-based
+measures move little (Moors not at all), and all of them sit above their
+normal values even before 2020: GDP growth has fat tails, but no clear
+asymmetry. Two observations should not change a stylized fact: report a
+robust measure next to the classical one.</p>
+</section>
+<section id="a-common-cycle-from-many-indicators">
+<h2><span class="section-number">8.5. </span>A common cycle from many indicators<a class="headerlink" href="#a-common-cycle-from-many-indicators" title="Link to this heading">#</a></h2>
+<p>No single monthly indicator is “the cycle”. The first principal component
+of several standardized indicators is a simple coincident index: the common
+movement they share (EMT <code class="docutils literal notranslate"><span class="pre">pc_T</span></code>, normalized so that <span class="math notranslate nohighlight">\(F'F/T = I\)</span>). All
+inputs are in growth rates, signed so that a rise is good news, and
+standardized, since otherwise the most volatile series dominates.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">monthly</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">"industrial production"</span><span class="p">:</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="s2">"INDPRO"</span><span class="p">))</span><span class="o">.</span><span class="n">diff</span><span class="p">(),</span>
+            <span class="s2">"payrolls"</span><span class="p">:</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="s2">"PAYEMS"</span><span class="p">))</span><span class="o">.</span><span class="n">diff</span><span class="p">(),</span>
+            <span class="s2">"real retail sales"</span><span class="p">:</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="s2">"RSXFS"</span><span class="p">)</span> <span class="o">/</span> <span class="n">load</span><span class="p">(</span><span class="s2">"CPIAUCSL"</span><span class="p">))</span><span class="o">.</span><span class="n">diff</span><span class="p">(),</span>
+            <span class="s2">"unemployment (-)"</span><span class="p">:</span> <span class="o">-</span><span class="n">load</span><span class="p">(</span><span class="s2">"UNRATE"</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">(),</span>
+            <span class="s2">"jobless claims (-)"</span><span class="p">:</span> <span class="o">-</span><span class="mi">100</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="s2">"ICSA"</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"MS"</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="o">.</span><span class="n">diff</span><span class="p">(),</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"1993"</span><span class="p">:</span><span class="s2">"2019"</span><span class="p">]</span>
+    <span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="p">)</span>
+
+<span class="n">Z</span> <span class="o">=</span> <span class="p">(</span><span class="n">monthly</span> <span class="o">-</span> <span class="n">monthly</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">monthly</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>  <span class="c1"># standardize</span>
+<span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">Vt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">Z</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+<span class="n">factor</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">U</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">Z</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>  <span class="c1"># F'F/T = 1</span>
+<span class="n">loadings</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">Vt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">S</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">Z</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">loadings</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># sign is arbitrary</span>
+    <span class="n">factor</span><span class="p">,</span> <span class="n">loadings</span> <span class="o">=</span> <span class="o">-</span><span class="n">factor</span><span class="p">,</span> <span class="o">-</span><span class="n">loadings</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"variance share of each component:"</span><span class="p">,</span> <span class="p">(</span><span class="n">S</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">S</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">loadings</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">factor_q</span> <span class="o">=</span> <span class="n">factor</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="s2">"M"</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"Q"</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"corr with GDP growth:"</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">factor_q</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">factor_q</span><span class="o">.</span><span class="n">index</span><span class="p">)),</span> <span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>variance share of each component: [0.42 0.2  0.17 0.12 0.1 ]
+industrial production    0.77
+payrolls                 0.80
+real retail sales        0.38
+unemployment (-)         0.64
+jobless claims (-)       0.55
+dtype: float64
+corr with GDP growth: 0.7
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.cycles import pc_factors
+
+factors, loadings, share = pc_factors(monthly, n=1)
+</pre></div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">smooth</span> <span class="o">=</span> <span class="n">factor</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">smooth</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">smooth</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">)</span>
+<span class="n">on</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"1993"</span><span class="p">:</span><span class="s2">"2019"</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">qtr</span> <span class="ow">in</span> <span class="n">on</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">on</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]:</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">qtr</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span> <span class="n">qtr</span><span class="o">.</span><span class="n">end_time</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"0.85"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Coincident factor (3-month average) and NBER recessions"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, 'Coincident factor (3-month average) and NBER recessions')
+</pre></div>
+</div>
+<img alt="../../_images/3b9c653ecd5043cdbf96d5f1825ca5df7f0117bed5ffa05d81b143e4e56b26c2.png" src="../../_images/3b9c653ecd5043cdbf96d5f1825ca5df7f0117bed5ffa05d81b143e4e56b26c2.png" />
+</div>
+</div>
+<p>One component explains about two-fifths of the variance of the five
+indicators, loads positively on all of them, and correlates 0.7 with GDP
+growth. It falls sharply in both recessions of the sample. With many
+series (dozens to hundreds), choose the number of factors with the Bai and
+Ng (2002) criteria (EMT <code class="docutils literal notranslate"><span class="pre">numbfactor</span></code>) and handle missing data with the EM
+algorithm or <code class="docutils literal notranslate"><span class="pre">sm.tsa.DynamicFactorMQ</span></code>, which also mixes monthly and
+quarterly series.</p>
+</section>
+<section id="pitfalls">
+<h2><span class="section-number">8.6. </span>Pitfalls<a class="headerlink" href="#pitfalls" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>BBQ on a noisy series finds spurious cycles; smooth or use a longer window
+for monthly data.</p></li>
+<li><p>Phase statistics from a handful of recessions have huge sampling error.</p></li>
+<li><p>Cross-correlations of two-sided filtered series mix leads and lags (the
+filter itself is two-sided). Leads/lags of a few quarters are not robust
+evidence of causality.</p></li>
+</ul>
+</section>
+<section id="summary">
+<h2><span class="section-number">8.7. </span>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Date turning points on the <strong>level</strong> of (log) activity: the classical
+cycle. Dating a detrended series gives the growth cycle, a different
+object with more turning points.</p></li>
+<li><p>Moments of the cycle depend on the filter (chapter 6). State which one.</p></li>
+<li><p>Exclude 2020 when estimating moments, or show results with and without.</p></li>
+</ul>
+</section>
+<section id="exercises">
+<h2><span class="section-number">8.8. </span>Exercises<a class="headerlink" href="#exercises" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Run BBQ on monthly log payroll employment (<code class="docutils literal notranslate"><span class="pre">PAYEMS</span></code>, 1948–2019) with the monthly settings (<code class="docutils literal notranslate"><span class="pre">window=5</span></code>, <code class="docutils literal notranslate"><span class="pre">phase=6</span></code>, <code class="docutils literal notranslate"><span class="pre">cycle=15</span></code>). Compare its peaks with the NBER peaks from <code class="docutils literal notranslate"><span class="pre">USRECQ</span></code>: does employment catch the 2001 recession that GDP misses?</p></li>
+<li><p>Date the Portuguese cycle with BBQ on log real GDP (<code class="docutils literal notranslate"><span class="pre">CLVMNACSCAB1GQPT</span></code>, 1995 to the end of the sample). Report the number of contractions and their average duration and amplitude, and compare them with the US figures in the chapter.</p></li>
+<li><p>Recompute the stylized-facts table (1960–2019) with Hamilton-filter cycles (chapter 6) instead of HP cycles. Does payroll employment still lag GDP, and does the countercyclical price level survive?</p></li>
+<li><p>Compute classical and robust skewness of quarterly changes in the unemployment rate (<code class="docutils literal notranslate"><span class="pre">UNRATE</span></code> averaged to quarters, 1948–2019). Do unemployment increases look sharper than declines, and do the robust measures agree with the classical one?</p></li>
+</ol>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks/08"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../07/rolling-smoothing.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">7. </span>Rolling windows, smoothing, lags and leads</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../09/diagnostics.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">9. </span>Diagnostics: stationarity, autocorrelation, outliers</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dating-turning-points-the-bbq-algorithm">8.1. Dating turning points: the BBQ algorithm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phases-duration-and-amplitude">8.2. Phases: duration and amplitude</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stylized-facts-of-the-cycle">8.3. Stylized facts of the cycle</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#asymmetry-and-fat-tails-robust-moments">8.4. Asymmetry and fat tails: robust moments</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-common-cycle-from-many-indicators">8.5. A common cycle from many indicators</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfalls">8.6. Pitfalls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">8.7. Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">8.8. Exercises</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Hugo Morão
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

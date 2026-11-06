@@ -1,0 +1,979 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>11. Paper-quality figures: impulse responses and decompositions &#8212; Economic Time Series in Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/11/paper-figures';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="The econts toolkit" href="../00/toolkit.html" />
+    <link rel="prev" title="10. Crisis dummies and recession bands: Portugal" href="../10/crisis-dummies.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../00/intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Economic Time Series in Python</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapters</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01/dates-frequencies.html">1. Dates, periods and frequencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02/transformations.html">2. Transformations: logs, growth rates, indices, deflators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03/aggregation.html">3. Temporal aggregation: from high to low frequency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04/interpolation.html">4. Interpolation and temporal disaggregation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05/seasonal-adjustment.html">5. Seasonal adjustment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06/detrending.html">6. Detrending and filtering: trend and cycle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../07/rolling-smoothing.html">7. Rolling windows, smoothing, lags and leads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../08/business-cycles.html">8. Business cycles: turning points and stylized facts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../09/diagnostics.html">9. Diagnostics: stationarity, autocorrelation, outliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../10/crisis-dummies.html">10. Crisis dummies and recession bands: Portugal</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">11. Paper-quality figures: impulse responses and decompositions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00/toolkit.html">The <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../00/cheatsheet.html">Cheat sheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../00/knowledge_test.html">Knowledge test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../00/resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/hmorao95/econ-time-series-manual/blob/main/notebooks/11/paper-figures.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/hmorao95/econ-time-series-manual" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/hmorao95/econ-time-series-manual/issues/new?title=Issue%20on%20page%20%2Fnotebooks/11/paper-figures.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/notebooks/11/paper-figures.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Paper-quality figures: impulse responses and decompositions</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-model-a-small-oil-shock-svar">11.1. The model: a small oil-shock SVAR</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#impulse-responses-in-a-grid">11.2. Impulse responses in a grid</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparing-specifications">11.3. Comparing specifications</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#time-series-with-shaded-episodes-and-events">11.4. Time series with shaded episodes and events</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#historical-decomposition">11.5. Historical decomposition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#without-housestyle">11.6. Without housestyle</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfalls">11.7. Pitfalls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">11.8. Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">11.9. Exercises</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="paper-quality-figures-impulse-responses-and-decompositions">
+<h1><span class="section-number">11. </span>Paper-quality figures: impulse responses and decompositions<a class="headerlink" href="#paper-quality-figures-impulse-responses-and-decompositions" title="Link to this heading">#</a></h1>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Setup: install the toolkit when running on Google Colab, and a plotting style</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="k">if</span> <span class="s2">"google.colab"</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+    <span class="o">%</span><span class="k">pip</span> install -q "econts[book] @ git+https://github.com/hmorao95/econ-time-series-manual"
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    <span class="s2">"figure.figsize"</span><span class="p">:</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">3.6</span><span class="p">),</span> <span class="s2">"axes.grid"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"grid.alpha"</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="s2">"axes.spines.top"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"axes.spines.right"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"legend.frameon"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<p>Figures in a paper follow different rules from exploratory plots: they are
+read in print, in grey, at a small size, next to a caption. This chapter
+draws the standard figures of an SVAR paper with
+<a class="reference external" href="https://github.com/hmorao95/housestyle">housestyle</a>, a small package that
+reproduces in matplotlib the MATLAB figure style used in a series of SVAR
+papers on shipping disruptions, so Python and MATLAB figures can sit side by
+side in one paper.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">housestyle</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">hs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">econts</span><span class="w"> </span><span class="kn">import</span> <span class="n">load</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="the-model-a-small-oil-shock-svar">
+<h2><span class="section-number">11.1. </span>The model: a small oil-shock SVAR<a class="headerlink" href="#the-model-a-small-oil-shock-svar" title="Link to this heading">#</a></h2>
+<p>Monthly US data, 1990–2019: the real oil price, industrial production and
+CPI in log differences × 100, and the unemployment rate in levels. The oil
+price is ordered first, so an oil shock can move everything else on impact
+but nothing else moves the oil price within the month (a recursive,
+Cholesky identification). Twelve lags.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">oil</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"DCOILBRENTEU"</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"MS"</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>  <span class="c1"># daily -&gt; monthly mean</span>
+<span class="n">cpi</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">u</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"CPIAUCSL"</span><span class="p">),</span> <span class="n">load</span><span class="p">(</span><span class="s2">"INDPRO"</span><span class="p">),</span> <span class="n">load</span><span class="p">(</span><span class="s2">"UNRATE"</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">"oil"</span><span class="p">:</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">oil</span> <span class="o">/</span> <span class="n">cpi</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">(),</span>  <span class="c1"># real oil price growth</span>
+            <span class="s2">"ip"</span><span class="p">:</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">(),</span>
+            <span class="s2">"cpi"</span><span class="p">:</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">cpi</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">(),</span>
+            <span class="s2">"u"</span><span class="p">:</span> <span class="n">u</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"1990"</span><span class="p">:</span><span class="s2">"2019"</span><span class="p">]</span>
+    <span class="o">.</span><span class="n">asfreq</span><span class="p">(</span><span class="s2">"MS"</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">var</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">VAR</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">H</span> <span class="o">=</span> <span class="mi">24</span>
+<span class="n">irf</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">irf</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Responses of variables in growth rates are <strong>cumulated</strong> to give the effect
+on the level; the unemployment rate is already a level. The shock is scaled
+to raise the real oil price by 10% on impact, a more readable unit than “one
+standard deviation”. For simplicity the bands are rescaled by the same
+factor as the point estimate; a stricter version would normalize each Monte
+Carlo draw by its own impact response.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cumulate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>  <span class="c1"># oil, ip, cpi | u</span>
+<span class="n">point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cumulate</span><span class="p">,</span> <span class="n">irf</span><span class="o">.</span><span class="n">orth_cum_effects</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">irf</span><span class="o">.</span><span class="n">orth_irfs</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">scale</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">/</span> <span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 68% Monte Carlo bands</span>
+<span class="n">lo_c</span><span class="p">,</span> <span class="n">hi_c</span> <span class="o">=</span> <span class="n">irf</span><span class="o">.</span><span class="n">cum_errband_mc</span><span class="p">(</span><span class="n">orth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">repl</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">signif</span><span class="o">=</span><span class="mf">0.32</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+<span class="n">lo_l</span><span class="p">,</span> <span class="n">hi_l</span> <span class="o">=</span> <span class="n">irf</span><span class="o">.</span><span class="n">errband_mc</span><span class="p">(</span><span class="n">orth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">repl</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">signif</span><span class="o">=</span><span class="mf">0.32</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+<span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cumulate</span><span class="p">,</span> <span class="n">lo_c</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">lo_l</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cumulate</span><span class="p">,</span> <span class="n">hi_c</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">hi_l</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">])</span>
+
+<span class="n">med</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">point</span> <span class="o">*</span> <span class="n">scale</span><span class="p">,</span> <span class="n">lo</span> <span class="o">*</span> <span class="n">scale</span><span class="p">,</span> <span class="n">hi</span> <span class="o">*</span> <span class="n">scale</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">med</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">24</span><span class="p">]],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">24</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
+        <span class="mi">2</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>      oil    ip   cpi     u
+0   10.00  0.03  0.13  0.00
+6    9.12  0.20  0.31 -0.03
+12   9.45  0.01  0.32  0.00
+24   7.93 -0.15  0.27  0.07
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.svar import irf_with_bands
+
+irf = irf_with_bands(var, shock=0, horizon=24, cumulate=[True, True, True, False], impact=10)
+</pre></div>
+</div>
+</div>
+<p>A 10% oil price increase raises the CPI by about 0.3% within six months
+and leaves real activity almost unchanged: industrial production moves by a
+fraction of a percent, unemployment by hundredths of a point. That is the
+familiar finding that oil price <em>changes</em> mix supply and demand shocks; a
+paper would separate them (Kilian, 2009).</p>
+</section>
+<section id="impulse-responses-in-a-grid">
+<h2><span class="section-number">11.2. </span>Impulse responses in a grid<a class="headerlink" href="#impulse-responses-in-a-grid" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">hs.figure(rows,</span> <span class="pre">cols)</span></code> sets up the MATLAB-sized grid; <code class="docutils literal notranslate"><span class="pre">hs.irf</span></code> draws a
+panel: black median, band over it, zero line, labels. The horizon starts at
+0 (impact), so text quoting h = 0, 6, 12 matches the axis.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"Real oil price"</span><span class="p">,</span>
+    <span class="s2">"Industrial production"</span><span class="p">,</span>
+    <span class="s2">"Consumer prices"</span><span class="p">,</span>
+    <span class="s2">"Unemployment rate"</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">units</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"%"</span><span class="p">,</span> <span class="s2">"%"</span><span class="p">,</span> <span class="s2">"%"</span><span class="p">,</span> <span class="s2">"pp"</span><span class="p">]</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">H</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">hs</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axes</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">H</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="n">hs</span><span class="o">.</span><span class="n">irf</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">med</span><span class="p">[:,</span> <span class="n">k</span><span class="p">],</span> <span class="n">lo</span><span class="p">[:,</span> <span class="n">k</span><span class="p">],</span> <span class="n">hi</span><span class="p">[:,</span> <span class="n">k</span><span class="p">],</span> <span class="n">names</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">units</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="s2">"Months"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/f8d3df4a7cf05db3fe169b66e4cb113575ae8e0b20c04eadcf5b24c9b38ec8c4.png" src="../../_images/f8d3df4a7cf05db3fe169b66e4cb113575ae8e0b20c04eadcf5b24c9b38ec8c4.png" />
+</div>
+</div>
+<p>In a paper the script ends with the export, which writes a 300 dpi PNG (or a
+PDF, by suffix) cropped to the content:</p>
+<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="n">hs</span><span class="o">.</span><span class="n">outdir</span><span class="p">(</span><span class="s2">"figures"</span><span class="p">)</span>  <span class="c1"># once per script</span>
+<span class="n">hs</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="s2">"irf_oil_baseline"</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="comparing-specifications">
+<h2><span class="section-number">11.3. </span>Comparing specifications<a class="headerlink" href="#comparing-specifications" title="Link to this heading">#</a></h2>
+<p>Robustness figures overlay alternatives on the baseline and its band. Draw
+the baseline, then the band, then the alternatives, then <code class="docutils literal notranslate"><span class="pre">hs.finish</span></code> for
+labels and the zero line; the legend goes in one panel.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">point_irf</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lags</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Point responses to a 10% oil shock, cumulated like the baseline."""</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">VAR</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">lags</span><span class="p">)</span><span class="o">.</span><span class="n">irf</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cumulate</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">orth_cum_effects</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="o">.</span><span class="n">orth_irfs</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">p</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">/</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+
+<span class="n">alternatives</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"6 lags"</span><span class="p">:</span> <span class="n">point_irf</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+    <span class="s2">"2000-2019"</span><span class="p">:</span> <span class="n">point_irf</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"2000"</span><span class="p">:],</span> <span class="mi">12</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">hs</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axes</span><span class="p">):</span>
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">hs</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">med</span><span class="p">[:,</span> <span class="n">k</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># black solid</span>
+    <span class="n">hs</span><span class="o">.</span><span class="n">band</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">lo</span><span class="p">[:,</span> <span class="n">k</span><span class="p">],</span> <span class="n">hi</span><span class="p">[:,</span> <span class="n">k</span><span class="p">])</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="n">hs</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">alternatives</span><span class="p">[</span><span class="s2">"6 lags"</span><span class="p">][:,</span> <span class="n">k</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># orange dashed</span>
+    <span class="n">h3</span> <span class="o">=</span> <span class="n">hs</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">alternatives</span><span class="p">[</span><span class="s2">"2000-2019"</span><span class="p">][:,</span> <span class="n">k</span><span class="p">],</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># green dash-dot</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">H</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">H</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="n">hs</span><span class="o">.</span><span class="n">finish</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">names</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">units</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="s2">"Months"</span><span class="p">)</span>
+<span class="n">hs</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">h1</span><span class="p">,</span> <span class="n">h2</span><span class="p">,</span> <span class="n">h3</span><span class="p">],</span> <span class="p">[</span><span class="s2">"Baseline"</span><span class="p">,</span> <span class="s2">"6 lags"</span><span class="p">,</span> <span class="s2">"2000-2019"</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s2">"upper right"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x1e3af81c830&gt;
+</pre></div>
+</div>
+<img alt="../../_images/e67b811ae9150962310e9b67abebb4dac3bc14ff028033c7514a7ed8b3205b74.png" src="../../_images/e67b811ae9150962310e9b67abebb4dac3bc14ff028033c7514a7ed8b3205b74.png" />
+</div>
+</div>
+</section>
+<section id="time-series-with-shaded-episodes-and-events">
+<h2><span class="section-number">11.4. </span>Time series with shaded episodes and events<a class="headerlink" href="#time-series-with-shaded-episodes-and-events" title="Link to this heading">#</a></h2>
+<p>One observed series is drawn in the MATLAB blue (<code class="docutils literal notranslate"><span class="pre">hs.line(...,</span> <span class="pre">&quot;data&quot;)</span></code>);
+<code class="docutils literal notranslate"><span class="pre">hs.shade</span></code> adds grey episodes behind the data and <code class="docutils literal notranslate"><span class="pre">hs.event</span></code> labels a point.
+Here, the real oil price with NBER recessions:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">real_oil</span> <span class="o">=</span> <span class="p">(</span><span class="n">oil</span> <span class="o">/</span> <span class="n">cpi</span> <span class="o">*</span> <span class="n">cpi</span><span class="p">[</span><span class="s2">"2024"</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"1990"</span><span class="p">:]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">rec</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"USRECQ"</span><span class="p">)</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="s2">"Q"</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"1990"</span><span class="p">:]</span>
+<span class="n">starts</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">index</span><span class="p">[(</span><span class="n">rec</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)]</span>
+<span class="n">ends</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">index</span><span class="p">[(</span><span class="n">rec</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">hs</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">380</span><span class="p">)</span>
+<span class="n">hs</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">real_oil</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">real_oil</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="s2">"data"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">starts</span><span class="p">,</span> <span class="n">ends</span><span class="p">):</span>
+    <span class="n">shade</span> <span class="o">=</span> <span class="n">hs</span><span class="o">.</span><span class="n">shade</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">end_time</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Recession"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">real_oil</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">real_oil</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">250</span><span class="p">)</span>
+<span class="n">peak</span> <span class="o">=</span> <span class="n">real_oil</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"2008"</span><span class="p">]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span>
+<span class="n">hs</span><span class="o">.</span><span class="n">event</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">peak</span><span class="p">,</span> <span class="n">real_oil</span><span class="p">[</span><span class="n">peak</span><span class="p">],</span> <span class="s2">"2008 peak"</span><span class="p">)</span>
+<span class="n">hs</span><span class="o">.</span><span class="n">finish</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="s2">"Real oil price"</span><span class="p">,</span> <span class="s2">"USD/bbl, 2024 </span><span class="se">\\</span><span class="s2">$"</span><span class="p">)</span>
+<span class="n">hs</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="p">[</span><span class="n">shade</span><span class="p">],</span> <span class="p">[</span><span class="s2">"NBER recession"</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s2">"upper left"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x1e3b23b2490&gt;
+</pre></div>
+</div>
+<img alt="../../_images/f6f3f6a12e8d0924ae5109bd9f238c954d9103e9a55dcad012e0745273beaccc.png" src="../../_images/f6f3f6a12e8d0924ae5109bd9f238c954d9103e9a55dcad012e0745273beaccc.png" />
+</div>
+</div>
+</section>
+<section id="historical-decomposition">
+<h2><span class="section-number">11.5. </span>Historical decomposition<a class="headerlink" href="#historical-decomposition" title="Link to this heading">#</a></h2>
+<p>A historical decomposition splits each variable, period by period, into the
+contribution of each structural shock plus a deterministic part (constant
+and initial conditions). With residuals <span class="math notranslate nohighlight">\(u_t\)</span>, the Cholesky factor <span class="math notranslate nohighlight">\(P\)</span> of
+their covariance and the orthogonalized MA coefficients <span class="math notranslate nohighlight">\(\Theta_j\)</span>, the
+shocks are <span class="math notranslate nohighlight">\(\varepsilon_t = P^{-1}u_t\)</span> and shock <span class="math notranslate nohighlight">\(k\)</span> contributes
+<span class="math notranslate nohighlight">\(\sum_{j=0}^{t}\Theta_j[i,k]\,\varepsilon_{t-j,k}\)</span> to variable <span class="math notranslate nohighlight">\(i\)</span> at <span class="math notranslate nohighlight">\(t\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eps</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">sigma_u</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+<span class="n">T</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">eps</span><span class="o">.</span><span class="n">shape</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">orth_ma_rep</span><span class="p">(</span><span class="n">maxn</span><span class="o">=</span><span class="n">T</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># (T, n, n)</span>
+<span class="n">contrib</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">T</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>  <span class="c1"># time, variable, shock</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+    <span class="n">contrib</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">"jik,jk-&gt;ik"</span><span class="p">,</span> <span class="n">theta</span><span class="p">[:</span> <span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">eps</span><span class="p">[</span><span class="n">t</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="n">dates</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">index</span>
+<span class="n">actual</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">dates</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<span class="n">deterministic</span> <span class="o">=</span> <span class="n">actual</span> <span class="o">-</span> <span class="n">contrib</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"adds up:"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">deterministic</span> <span class="o">+</span> <span class="n">contrib</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">actual</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>adds up: True
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.svar import historical_decomposition
+
+contributions, deterministic = historical_decomposition(var)
+</pre></div>
+</div>
+</div>
+<p>The decomposition of the unemployment rate around the Great Recession, as
+stacked bars with the total (actual minus deterministic part) on top:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">window</span> <span class="o">=</span> <span class="p">(</span><span class="n">dates</span> <span class="o">&gt;=</span> <span class="s2">"2007-01-01"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">dates</span> <span class="o">&lt;=</span> <span class="s2">"2011-12-01"</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">dates</span><span class="p">[</span><span class="n">window</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">contrib</span><span class="p">[</span><span class="n">window</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># unemployment, all shocks</span>
+<span class="n">total</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">hs</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">460</span><span class="p">)</span>
+<span class="n">bars</span> <span class="o">=</span> <span class="n">hs</span><span class="o">.</span><span class="n">bars</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+<span class="n">h_total</span> <span class="o">=</span> <span class="n">hs</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s2">"D"</span><span class="p">),</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s2">"D"</span><span class="p">))</span>
+<span class="n">hs</span><span class="o">.</span><span class="n">finish</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="s2">"Unemployment rate"</span><span class="p">,</span> <span class="s2">"pp"</span><span class="p">)</span>
+<span class="n">hs</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span>
+    <span class="n">ax</span><span class="p">,</span>
+    <span class="p">[</span><span class="o">*</span><span class="n">bars</span><span class="p">,</span> <span class="n">h_total</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">"Oil"</span><span class="p">,</span> <span class="s2">"Industrial production"</span><span class="p">,</span> <span class="s2">"Prices"</span><span class="p">,</span> <span class="s2">"Unemployment"</span><span class="p">,</span> <span class="s2">"Total"</span><span class="p">],</span>
+    <span class="n">outside</span><span class="o">=</span><span class="s2">"south"</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x1e3b24d56d0&gt;
+</pre></div>
+</div>
+<img alt="../../_images/d99f10952d200a5dd9db3b93e1f166bdcf18b784e6933aef1caa92e8875a881a.png" src="../../_images/d99f10952d200a5dd9db3b93e1f166bdcf18b784e6933aef1caa92e8875a881a.png" />
+</div>
+</div>
+<p>Of the 4.5-point rise in unemployment in 2008–09, the model attributes most
+to industrial production shocks and to unemployment’s own shocks; oil shocks
+account for about half a point, consistent with the small impulse responses
+above.</p>
+</section>
+<section id="without-housestyle">
+<h2><span class="section-number">11.6. </span>Without housestyle<a class="headerlink" href="#without-housestyle" title="Link to this heading">#</a></h2>
+<p>The essentials take a few lines of plain matplotlib, if you prefer no
+dependency:</p>
+<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">"axes.grid"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">"grid.alpha"</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span>
+        <span class="s2">"xtick.direction"</span><span class="p">:</span> <span class="s2">"in"</span><span class="p">,</span>
+        <span class="s2">"ytick.direction"</span><span class="p">:</span> <span class="s2">"in"</span><span class="p">,</span>
+        <span class="s2">"xtick.top"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">"ytick.right"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">"axes.titleweight"</span><span class="p">:</span> <span class="s2">"bold"</span><span class="p">,</span>
+        <span class="s2">"mathtext.fontset"</span><span class="p">:</span> <span class="s2">"cm"</span><span class="p">,</span>
+        <span class="s2">"savefig.dpi"</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">med</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">lo</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">hi</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">"irf.png"</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">"tight"</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">"white"</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="pitfalls">
+<h2><span class="section-number">11.7. </span>Pitfalls<a class="headerlink" href="#pitfalls" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Cumulate the right variables.</strong> Responses of variables in differences
+are cumulated to get levels; cumulating a variable already in levels (the
+unemployment rate) produces nonsense.</p></li>
+<li><p><strong>State the shock size and the band.</strong> “68% bands, shock normalized to a
+10% oil price increase” belongs in the caption.</p></li>
+<li><p><strong>Same axes across a comparison</strong>, different axes across variables:
+comparing specifications needs identical y-limits within a panel, not
+across panels.</p></li>
+<li><p><strong>Bands are about the estimate, not the identification.</strong> A tight band
+around a recursive SVAR says nothing about whether the ordering is right.</p></li>
+</ul>
+</section>
+<section id="summary">
+<h2><span class="section-number">11.8. </span>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Point estimate <strong>black</strong>, band <strong>translucent blue over it</strong>, dashed zero
+line only when zero is in range.</p></li>
+<li><p>Tell series apart by <strong>line style as well as color</strong> (solid, dashed,
+dash-dot): figures must survive grey print and colorblind readers.
+More than four series: use small multiples.</p></li>
+<li><p><strong>No overall title</strong>: the LaTeX caption explains the figure. Panel
+titles are short, plain and without units; every panel has a y label
+with units.</p></li>
+<li><p>One legend per figure. Export at <strong>300 dpi</strong>, cropped to the content.</p></li>
+<li><p>Keep the computation and the drawing apart: write the plotted arrays to
+a tidy CSV, then draw from it with one script per figure.</p></li>
+</ul>
+</section>
+<section id="exercises">
+<h2><span class="section-number">11.9. </span>Exercises<a class="headerlink" href="#exercises" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Redraw the impulse-response grid with 90% bands (<code class="docutils literal notranslate"><span class="pre">signif=0.10</span></code>) and write the plotted arrays (horizon, variable, median, lower, upper) to a tidy CSV before drawing from it. What must the caption now say?</p></li>
+<li><p>Re-estimate the SVAR with the real oil price ordered last instead of first. How do the impact responses of CPI and industrial production change, and why can the bands not tell you which ordering is right?</p></li>
+<li><p>Add a third alternative (the 1990–2007 sample, which excludes the Great Recession) to the specification-comparison figure. Following the chapter’s rules on line styles and number of series, is one panel per variable still readable?</p></li>
+<li><p>Extend the sample to 1990–2024 and compute the historical decomposition of CPI inflation, cumulated to the price level, for 2021–2023. How much of the inflation surge does the model assign to oil shocks, and how does including 2020 affect the estimates you would report?</p></li>
+</ol>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks/11"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../10/crisis-dummies.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">10. </span>Crisis dummies and recession bands: Portugal</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../00/toolkit.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">The <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-model-a-small-oil-shock-svar">11.1. The model: a small oil-shock SVAR</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#impulse-responses-in-a-grid">11.2. Impulse responses in a grid</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparing-specifications">11.3. Comparing specifications</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#time-series-with-shaded-episodes-and-events">11.4. Time series with shaded episodes and events</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#historical-decomposition">11.5. Historical decomposition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#without-housestyle">11.6. Without housestyle</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfalls">11.7. Pitfalls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">11.8. Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">11.9. Exercises</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Hugo Morão
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

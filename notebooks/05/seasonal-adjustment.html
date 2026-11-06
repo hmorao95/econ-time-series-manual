@@ -1,0 +1,1004 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>5. Seasonal adjustment &#8212; Economic Time Series in Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/05/seasonal-adjustment';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="6. Detrending and filtering: trend and cycle" href="../06/detrending.html" />
+    <link rel="prev" title="4. Interpolation and temporal disaggregation" href="../04/interpolation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../00/intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Economic Time Series in Python</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapters</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01/dates-frequencies.html">1. Dates, periods and frequencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02/transformations.html">2. Transformations: logs, growth rates, indices, deflators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03/aggregation.html">3. Temporal aggregation: from high to low frequency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04/interpolation.html">4. Interpolation and temporal disaggregation</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">5. Seasonal adjustment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06/detrending.html">6. Detrending and filtering: trend and cycle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../07/rolling-smoothing.html">7. Rolling windows, smoothing, lags and leads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../08/business-cycles.html">8. Business cycles: turning points and stylized facts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../09/diagnostics.html">9. Diagnostics: stationarity, autocorrelation, outliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../10/crisis-dummies.html">10. Crisis dummies and recession bands: Portugal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../11/paper-figures.html">11. Paper-quality figures: impulse responses and decompositions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00/toolkit.html">The <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../00/cheatsheet.html">Cheat sheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../00/knowledge_test.html">Knowledge test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../00/resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/hmorao95/econ-time-series-manual/blob/main/notebooks/05/seasonal-adjustment.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/hmorao95/econ-time-series-manual" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/hmorao95/econ-time-series-manual/issues/new?title=Issue%20on%20page%20%2Fnotebooks/05/seasonal-adjustment.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/notebooks/05/seasonal-adjustment.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Seasonal adjustment</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#is-there-seasonality">5.1. Is there seasonality?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classical-decomposition">5.2. Classical decomposition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stl">5.3. STL</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trading-day-and-easter-effects">5.4. Trading-day and Easter effects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#x-13arima-seats">5.5. X-13ARIMA-SEATS</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regression-on-seasonal-dummies">5.6. Regression on seasonal dummies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-seasonal-periods-mstl">5.7. Multiple seasonal periods: MSTL</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#year-on-year-growth-as-a-substitute">5.8. Year-on-year growth as a substitute</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfalls">5.9. Pitfalls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">5.10. Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">5.11. Exercises</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="seasonal-adjustment">
+<h1><span class="section-number">5. </span>Seasonal adjustment<a class="headerlink" href="#seasonal-adjustment" title="Link to this heading">#</a></h1>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Setup: install the toolkit when running on Google Colab, and a plotting style</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="k">if</span> <span class="s2">"google.colab"</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+    <span class="o">%</span><span class="k">pip</span> install -q "econts[book] @ git+https://github.com/hmorao95/econ-time-series-manual"
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    <span class="s2">"figure.figsize"</span><span class="p">:</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">3.6</span><span class="p">),</span> <span class="s2">"axes.grid"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"grid.alpha"</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="s2">"axes.spines.top"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"axes.spines.right"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"legend.frameon"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<p>A seasonally adjusted (SA) series removes the movements that repeat every
+year at the same time (Christmas sales, summer construction, school-year
+hiring) so that what remains is trend, cycle and irregular news.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.seasonal</span><span class="w"> </span><span class="kn">import</span> <span class="n">STL</span><span class="p">,</span> <span class="n">MSTL</span><span class="p">,</span> <span class="n">seasonal_decompose</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">econts</span><span class="w"> </span><span class="kn">import</span> <span class="n">load</span>
+
+<span class="n">nsa</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"RSXFSN"</span><span class="p">)</span><span class="o">.</span><span class="n">asfreq</span><span class="p">(</span><span class="s2">"MS"</span><span class="p">)</span>  <span class="c1"># retail sales, not seasonally adjusted</span>
+<span class="n">sa_official</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"RSXFS"</span><span class="p">)</span><span class="o">.</span><span class="n">asfreq</span><span class="p">(</span><span class="s2">"MS"</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nsa</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="is-there-seasonality">
+<h2><span class="section-number">5.1. </span>Is there seasonality?<a class="headerlink" href="#is-there-seasonality" title="Link to this heading">#</a></h2>
+<p>Look at the average by calendar month of the detrended series, and at the
+autocorrelation at the seasonal lag.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">growth</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">y</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span>
+<span class="n">by_month</span> <span class="o">=</span> <span class="n">growth</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">growth</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">by_month</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>  <span class="c1"># December +15%, January -20%</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"ACF at lag 12:"</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">acf</span><span class="p">(</span><span class="n">growth</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">nlags</span><span class="o">=</span><span class="mi">12</span><span class="p">)[</span><span class="mi">12</span><span class="p">],</span> <span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>date
+1    -25.4
+2     -0.9
+3     13.1
+4     -1.7
+5      5.9
+6     -2.3
+7      0.2
+8      2.1
+9     -6.4
+10     3.4
+11     1.9
+12    14.6
+ACF at lag 12: 0.92
+</pre></div>
+</div>
+</div>
+</div>
+<p>A quick formal test: regress the growth rate on month dummies and test that
+they are jointly equal (an F-test).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">"g"</span><span class="p">:</span> <span class="n">growth</span><span class="p">,</span> <span class="s2">"month"</span><span class="p">:</span> <span class="n">growth</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span><span class="p">})</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="s2">"g ~ C(month)"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"F = </span><span class="si">{</span><span class="n">ols</span><span class="o">.</span><span class="n">fvalue</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">, p = </span><span class="si">{</span><span class="n">ols</span><span class="o">.</span><span class="n">f_pvalue</span><span class="si">:</span><span class="s2">.1e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>F = 408, p = 4.4e-211
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="classical-decomposition">
+<h2><span class="section-number">5.2. </span>Classical decomposition<a class="headerlink" href="#classical-decomposition" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">seasonal_decompose</span></code> is the textbook method: a centered moving average for
+the trend and fixed seasonal factors. Simple, but the seasonal pattern cannot
+change over time and the trend is missing at both ends.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">classic</span> <span class="o">=</span> <span class="n">seasonal_decompose</span><span class="p">(</span><span class="n">nsa</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">"multiplicative"</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">sa_classic</span> <span class="o">=</span> <span class="n">nsa</span> <span class="o">/</span> <span class="n">classic</span><span class="o">.</span><span class="n">seasonal</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">classic</span><span class="o">.</span><span class="n">seasonal</span><span class="p">[</span><span class="s2">"2024"</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>date
+2024-01-01    0.898
+2024-02-01    0.886
+2024-03-01    1.008
+2024-04-01    0.986
+2024-05-01    1.042
+2024-06-01    1.014
+2024-07-01    1.012
+2024-08-01    1.031
+2024-09-01    0.963
+2024-10-01    0.993
+2024-11-01    1.008
+2024-12-01    1.162
+Freq: MS
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="stl">
+<h2><span class="section-number">5.3. </span>STL<a class="headerlink" href="#stl" title="Link to this heading">#</a></h2>
+<p>STL (Cleveland et al., 1990) lets the seasonal pattern evolve, has no end
+point loss and, with <code class="docutils literal notranslate"><span class="pre">robust=True</span></code>, downweights outliers such as the 2020
+lockdowns, so they do not contaminate the seasonal factors.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stl</span> <span class="o">=</span> <span class="n">STL</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">seasonal</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">sa_stl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">stl</span><span class="o">.</span><span class="n">seasonal</span><span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">stl</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/ab85ac844969eeb29a0cf2bfed095706a9f64ae44faac193f65026de0fb9e903.png" src="../../_images/ab85ac844969eeb29a0cf2bfed095706a9f64ae44faac193f65026de0fb9e903.png" />
+</div>
+</div>
+<p>Main knobs: <code class="docutils literal notranslate"><span class="pre">seasonal</span></code> (odd, ≥ 7) is the length of the seasonal smoother:
+larger means more stable seasonal factors. <code class="docutils literal notranslate"><span class="pre">trend</span></code> defaults to a sensible
+value given <code class="docutils literal notranslate"><span class="pre">seasonal</span></code>. Check the result against the official series:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">"official"</span><span class="p">:</span> <span class="n">sa_official</span><span class="p">,</span> <span class="s2">"STL"</span><span class="p">:</span> <span class="n">sa_stl</span><span class="p">,</span> <span class="s2">"classical"</span><span class="p">:</span> <span class="n">sa_classic</span><span class="p">})</span>
+<span class="n">mm</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">cmp</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mm</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">"RMS gap to official m/m (pp):"</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="n">mm</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="s2">"official"</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+<span class="p">)</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">cmp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"2018"</span><span class="p">:</span><span class="s2">"2022"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"official"</span><span class="p">,</span> <span class="s2">"STL"</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">nsa</span><span class="p">[</span><span class="s2">"2018"</span><span class="p">:</span><span class="s2">"2022"</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"0.75"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"not adjusted"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"US retail sales, $ millions"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>           official    STL  classical
+official      1.000  0.708      0.626
+STL           0.708  1.000      0.803
+classical     0.626  0.803      1.000
+RMS gap to official m/m (pp): {'official': 0.0, 'STL': 1.69, 'classical': 2.26}
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x1ffe216f110&gt;
+</pre></div>
+</div>
+<img alt="../../_images/a0754f956de0305df1c4523ddd873410cf66e32d8ae48d0295a3cd5c070a07c2.png" src="../../_images/a0754f956de0305df1c4523ddd873410cf66e32d8ae48d0295a3cd5c070a07c2.png" />
+</div>
+</div>
+<p>STL tracks the official adjustment closely in levels, but month-on-month
+changes differ by 1.7 pp on average. Most of the gap is <strong>calendar effects</strong>:
+a month with five Fridays and Saturdays sells more than one with five Mondays,
+and Easter moves between March and April. STL cannot see those; X-13 can.</p>
+</section>
+<section id="trading-day-and-easter-effects">
+<h2><span class="section-number">5.4. </span>Trading-day and Easter effects<a class="headerlink" href="#trading-day-and-easter-effects" title="Link to this heading">#</a></h2>
+<p>You can get most of the way with STL by adding a regression on calendar
+counts: weekday counts relative to Sundays, month length, and the share of
+the eight days before Easter that fall in each month.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dateutil.easter</span><span class="w"> </span><span class="kn">import</span> <span class="n">easter</span>
+
+<span class="n">WEEKDAYS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Monday"</span><span class="p">,</span> <span class="s2">"Tuesday"</span><span class="p">,</span> <span class="s2">"Wednesday"</span><span class="p">,</span> <span class="s2">"Thursday"</span><span class="p">,</span> <span class="s2">"Friday"</span><span class="p">,</span> <span class="s2">"Saturday"</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">calendar_regressors</span><span class="p">(</span><span class="n">index</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Trading-day contrasts, month length and an Easter regressor, monthly."""</span>
+    <span class="n">days</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">freq</span><span class="o">=</span><span class="s2">"D"</span><span class="p">)</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">days</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="s2">"M"</span><span class="p">),</span> <span class="n">days</span><span class="o">.</span><span class="n">day_name</span><span class="p">())</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">counts</span><span class="p">[</span><span class="n">WEEKDAYS</span><span class="p">]</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">counts</span><span class="p">[</span><span class="s2">"Sunday"</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">X</span><span class="p">[</span><span class="s2">"length"</span><span class="p">]</span> <span class="o">=</span> <span class="n">length</span> <span class="o">-</span> <span class="n">length</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">pre_easter</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">yr</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">easter</span><span class="p">(</span><span class="n">yr</span><span class="p">)</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="n">periods</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">yr</span> <span class="ow">in</span> <span class="n">index</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="n">X</span><span class="p">[</span><span class="s2">"easter"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">pre_easter</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">year</span><span class="p">]</span><span class="o">.</span><span class="n">month</span> <span class="o">==</span> <span class="n">p</span><span class="o">.</span><span class="n">month</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">month</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">index</span>
+    <span class="p">]</span>
+    <span class="n">X</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">index</span>
+    <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">calendar_regressors</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="n">calendar</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>  <span class="c1"># alternate: STL, then calendar regression</span>
+    <span class="n">stl_td</span> <span class="o">=</span> <span class="n">STL</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">calendar</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">seasonal</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+    <span class="n">irregular</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">stl_td</span><span class="o">.</span><span class="n">seasonal</span> <span class="o">-</span> <span class="n">stl_td</span><span class="o">.</span><span class="n">trend</span>
+    <span class="n">reg</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">irregular</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X</span><span class="p">))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+    <span class="n">calendar</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">reg</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+<span class="n">sa_stl_td</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">stl_td</span><span class="o">.</span><span class="n">seasonal</span> <span class="o">-</span> <span class="n">calendar</span><span class="p">)</span>
+
+<span class="n">mm2</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mi">100</span>
+    <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">"official"</span><span class="p">:</span> <span class="n">sa_official</span><span class="p">,</span> <span class="s2">"STL"</span><span class="p">:</span> <span class="n">sa_stl</span><span class="p">,</span> <span class="s2">"STL + calendar"</span><span class="p">:</span> <span class="n">sa_stl_td</span><span class="p">}</span>
+        <span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mm2</span><span class="o">.</span><span class="n">corr</span><span class="p">()[</span><span class="s2">"official"</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">"RMS gap (pp):"</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mm2</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">mm2</span><span class="p">[</span><span class="s2">"official"</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{'official': 1.0, 'STL': 0.71, 'STL + calendar': 0.87}
+RMS gap (pp): {'official': 0.0, 'STL': 1.69, 'STL + calendar': 0.94}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.seasonal import calendar_regressors, stl_adjust
+
+sa = stl_adjust(nsa, calendar=True)["sa"]
+</pre></div>
+</div>
+</div>
+<p>The calendar regression raises the m/m correlation with the official series
+from 0.71 to 0.87 and nearly halves the gap. X-13 does this properly,
+with the calendar effects estimated jointly in a regARIMA model.</p>
+</section>
+<section id="x-13arima-seats">
+<h2><span class="section-number">5.5. </span>X-13ARIMA-SEATS<a class="headerlink" href="#x-13arima-seats" title="Link to this heading">#</a></h2>
+<p>The US Census Bureau’s program, the standard at statistical agencies. It
+pre-adjusts with a regARIMA model (outliers, trading days, Easter), then
+applies X-11 filters or SEATS. <code class="docutils literal notranslate"><span class="pre">statsmodels</span></code> wraps it, but you must download
+the <code class="docutils literal notranslate"><span class="pre">x13as</span></code> executable from the
+<a class="reference external" href="https://www.census.gov/data/software/x13as.html">Census Bureau</a> and put it
+on your <code class="docutils literal notranslate"><span class="pre">PATH</span></code> (or pass <code class="docutils literal notranslate"><span class="pre">x12path=</span></code>).</p>
+<div class="cell tag_skip-execution docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># requires: x13as</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.x13</span><span class="w"> </span><span class="kn">import</span> <span class="n">x13_arima_analysis</span>
+
+<span class="n">x13</span> <span class="o">=</span> <span class="n">x13_arima_analysis</span><span class="p">(</span><span class="n">nsa</span><span class="p">[</span><span class="s2">"2010"</span><span class="p">:</span><span class="s2">"2019"</span><span class="p">],</span> <span class="n">log</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">outlier</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">trading</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x13</span><span class="o">.</span><span class="n">results</span><span class="p">[:</span><span class="mi">2000</span><span class="p">])</span>  <span class="c1"># the full X-13 diagnostic output</span>
+<span class="n">sa_x13</span> <span class="o">=</span> <span class="n">x13</span><span class="o">.</span><span class="n">seasadj</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>If you work in R, the <code class="docutils literal notranslate"><span class="pre">seasonal</span></code> package is the most convenient X-13
+interface, and JDemetra+ is the European (Eurostat/ECB) standard.</p>
+</section>
+<section id="regression-on-seasonal-dummies">
+<h2><span class="section-number">5.6. </span>Regression on seasonal dummies<a class="headerlink" href="#regression-on-seasonal-dummies" title="Link to this heading">#</a></h2>
+<p>For a quick, transparent adjustment inside a model, include month (or
+quarter) dummies. This assumes <strong>deterministic, constant</strong> seasonality.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">"m"</span><span class="p">,</span> <span class="n">drop_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">dummies</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">index</span>
+<span class="n">trend</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">dummies</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="n">trend</span><span class="p">,</span> <span class="n">t2</span><span class="o">=</span><span class="n">trend</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">fit</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">seasonal_part</span> <span class="o">=</span> <span class="n">dummies</span> <span class="o">@</span> <span class="n">fit</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">dummies</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+<span class="n">sa_dummies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">seasonal_part</span> <span class="o">+</span> <span class="n">seasonal_part</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="multiple-seasonal-periods-mstl">
+<h2><span class="section-number">5.7. </span>Multiple seasonal periods: MSTL<a class="headerlink" href="#multiple-seasonal-periods-mstl" title="Link to this heading">#</a></h2>
+<p>High-frequency data can have several cycles: hourly electricity demand has a
+daily (24) and a weekly (168) pattern; daily data have weekly and annual
+cycles. <code class="docutils literal notranslate"><span class="pre">MSTL</span></code> peels them off one at a time. A simulated hourly example:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">hours</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s2">"2025-01-01"</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="mi">24</span> <span class="o">*</span> <span class="mi">7</span> <span class="o">*</span> <span class="mi">8</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">"h"</span><span class="p">)</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hours</span><span class="p">))</span>
+<span class="n">load_mw</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mi">100</span>
+    <span class="o">+</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">h</span>
+    <span class="o">+</span> <span class="mi">15</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">h</span> <span class="o">/</span> <span class="mi">24</span><span class="p">)</span>
+    <span class="o">+</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">h</span> <span class="o">/</span> <span class="mi">168</span><span class="p">)</span>
+    <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
+<span class="p">)</span>
+<span class="n">mstl</span> <span class="o">=</span> <span class="n">MSTL</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">load_mw</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">hours</span><span class="p">),</span> <span class="n">periods</span><span class="o">=</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">168</span><span class="p">))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mstl</span><span class="o">.</span><span class="n">seasonal</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># amplitude of each seasonal component</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>seasonal_24     10.6
+seasonal_168     5.7
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="year-on-year-growth-as-a-substitute">
+<h2><span class="section-number">5.8. </span>Year-on-year growth as a substitute<a class="headerlink" href="#year-on-year-growth-as-a-substitute" title="Link to this heading">#</a></h2>
+<p>The y/y growth of an unadjusted series removes stable seasonality without
+any model. It lags turning points by about six months and carries <strong>base
+effects</strong> (a big move twelve months ago reappears, inverted, today).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">yoy_nsa</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">nsa</span><span class="o">.</span><span class="n">pct_change</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">yoy_sa</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">sa_official</span><span class="o">.</span><span class="n">pct_change</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">((</span><span class="n">yoy_nsa</span> <span class="o">-</span> <span class="n">yoy_sa</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>  <span class="c1"># close, not identical</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>count    405.00
+mean       0.94
+std        0.89
+min        0.00
+25%        0.28
+50%        0.56
+75%        1.55
+max        4.88
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="pitfalls">
+<h2><span class="section-number">5.9. </span>Pitfalls<a class="headerlink" href="#pitfalls" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Direct vs indirect</strong> adjustment: adjusting the total is not the same as
+adding up adjusted components. Pick one and document it.</p></li>
+<li><p><strong>End-point revisions</strong>: seasonal factors at the end of the sample are
+revised as new data arrive. Real-time analysis must use real-time vintages.</p></li>
+<li><p><strong>COVID</strong>: 2020-21 broke many seasonal models. Use <code class="docutils literal notranslate"><span class="pre">robust=True</span></code>, or treat
+the period with outlier regressors (X-13) so it does not distort the
+seasonal factors for years after.</p></li>
+<li><p>Series with zero or negative values cannot be adjusted multiplicatively;
+use the additive model on levels.</p></li>
+<li><p>Quarterly data: <code class="docutils literal notranslate"><span class="pre">period=4</span></code>, and STL <code class="docutils literal notranslate"><span class="pre">seasonal=7</span></code> is a common choice.</p></li>
+</ul>
+</section>
+<section id="summary">
+<h2><span class="section-number">5.10. </span>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Use the <strong>official SA series</strong> when one exists. Adjust yourself only
+for series nobody adjusts, or to build something new.</p></li>
+<li><p>Adjust <strong>in logs</strong> (multiplicative seasonality) for anything whose
+seasonal swing grows with its level.</p></li>
+<li><p><strong>STL</strong> is the best quick tool in Python. <strong>X-13ARIMA-SEATS</strong> is what
+statistical offices use; it also handles trading-day and Easter effects.</p></li>
+<li><p>Never seasonally adjust an already-adjusted series, and never compute
+m/m changes on unadjusted data.</p></li>
+</ul>
+</section>
+<section id="exercises">
+<h2><span class="section-number">5.11. </span>Exercises<a class="headerlink" href="#exercises" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Compute the average monthly change of the unadjusted unemployment rate (<code class="docutils literal notranslate"><span class="pre">UNRATENSA</span></code>) by calendar month for 2010–2019, and test the month dummies jointly with an F-test. Which months carry the largest seasonal rise and fall, and why might that be?</p></li>
+<li><p>Adjust <code class="docutils literal notranslate"><span class="pre">UNRATENSA</span></code> with STL (<code class="docutils literal notranslate"><span class="pre">period=12</span></code>, <code class="docutils literal notranslate"><span class="pre">robust=True</span></code>). Should you work in logs or levels for a rate? Compare the m/m changes of your series with the official <code class="docutils literal notranslate"><span class="pre">UNRATE</span></code> over 2010–2019 (correlation and RMS gap).</p></li>
+<li><p>Aggregate unadjusted retail sales (<code class="docutils literal notranslate"><span class="pre">RSXFSN</span></code>) to quarters (chapter 3), adjust the quarterly series in logs with STL (<code class="docutils literal notranslate"><span class="pre">period=4</span></code>, <code class="docutils literal notranslate"><span class="pre">seasonal=7</span></code>), and compare its q/q growth with quarterly-aggregated <code class="docutils literal notranslate"><span class="pre">RSXFS</span></code>. Is quarterly adjustment closer to or further from the official series than the monthly STL of the chapter?</p></li>
+<li><p>Fit STL to log <code class="docutils literal notranslate"><span class="pre">RSXFSN</span></code> with <code class="docutils literal notranslate"><span class="pre">robust=True</span></code> and with <code class="docutils literal notranslate"><span class="pre">robust=False</span></code>, and compare the seasonal factors for March and April in 2019 and 2022. How much does the 2020 lockdown contaminate later seasonal factors without the robust option?</p></li>
+</ol>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks/05"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../04/interpolation.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">4. </span>Interpolation and temporal disaggregation</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../06/detrending.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">6. </span>Detrending and filtering: trend and cycle</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#is-there-seasonality">5.1. Is there seasonality?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classical-decomposition">5.2. Classical decomposition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stl">5.3. STL</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trading-day-and-easter-effects">5.4. Trading-day and Easter effects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#x-13arima-seats">5.5. X-13ARIMA-SEATS</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regression-on-seasonal-dummies">5.6. Regression on seasonal dummies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-seasonal-periods-mstl">5.7. Multiple seasonal periods: MSTL</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#year-on-year-growth-as-a-substitute">5.8. Year-on-year growth as a substitute</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfalls">5.9. Pitfalls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">5.10. Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">5.11. Exercises</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Hugo Morão
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

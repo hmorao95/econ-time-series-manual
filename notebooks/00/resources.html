@@ -1,0 +1,681 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Resources &#8212; Economic Time Series in Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/00/resources';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="Knowledge test" href="knowledge_test.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Economic Time Series in Python</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapters</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01/dates-frequencies.html">1. Dates, periods and frequencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02/transformations.html">2. Transformations: logs, growth rates, indices, deflators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03/aggregation.html">3. Temporal aggregation: from high to low frequency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04/interpolation.html">4. Interpolation and temporal disaggregation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05/seasonal-adjustment.html">5. Seasonal adjustment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06/detrending.html">6. Detrending and filtering: trend and cycle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../07/rolling-smoothing.html">7. Rolling windows, smoothing, lags and leads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../08/business-cycles.html">8. Business cycles: turning points and stylized facts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../09/diagnostics.html">9. Diagnostics: stationarity, autocorrelation, outliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../10/crisis-dummies.html">10. Crisis dummies and recession bands: Portugal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../11/paper-figures.html">11. Paper-quality figures: impulse responses and decompositions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="toolkit.html">The <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cheatsheet.html">Cheat sheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="knowledge_test.html">Knowledge test</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/hmorao95/econ-time-series-manual" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/hmorao95/econ-time-series-manual/issues/new?title=Issue%20on%20page%20%2Fnotebooks/00/resources.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/notebooks/00/resources.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Resources</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#books">Books</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#papers-cited-in-the-manual">Papers cited in the manual</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-3-aggregation">Chapter 3: aggregation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-4-interpolation-and-disaggregation">Chapter 4: interpolation and disaggregation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-5-seasonal-adjustment">Chapter 5: seasonal adjustment</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-6-detrending-and-filtering">Chapter 6: detrending and filtering</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-8-business-cycles">Chapter 8: business cycles</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-9-diagnostics">Chapter 9: diagnostics</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-10-crisis-dummies">Chapter 10: crisis dummies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-11-paper-figures">Chapter 11: paper figures</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#software-and-data">Software and data</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="resources">
+<h1>Resources<a class="headerlink" href="#resources" title="Link to this heading">#</a></h1>
+<section id="books">
+<h2>Books<a class="headerlink" href="#books" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Hamilton, J. D. (1994). <em>Time Series Analysis</em>. Princeton University Press.</p></li>
+<li><p>Canova, F. (2007). <em>Methods for Applied Macroeconomic Research</em>. Princeton University Press.</p></li>
+<li><p>Kilian, L., and Lütkepohl, H. (2017). <em>Structural Vector Autoregressive Analysis</em>. Cambridge University Press.</p></li>
+<li><p>Burns, A. F., and Mitchell, W. C. (1946). <em>Measuring Business Cycles</em>. National Bureau of Economic Research. The source of the 6–32 quarter business-cycle band (chapter 6).</p></li>
+<li><p>Bry, G., and Boschan, C. (1971). <em>Cyclical Analysis of Time Series: Selected Procedures and Computer Programs</em>. National Bureau of Economic Research. The monthly dating rules that BBQ adapts to quarterly data (chapter 8).</p></li>
+<li><p>Dagum, E. B., and Cholette, P. A. (2006). <em>Benchmarking, Temporal Distribution, and Reconciliation Methods for Time Series</em>. Lecture Notes in Statistics 186, Springer. A reference treatment of Denton and regression-based disaggregation (chapter 4).</p></li>
+<li><p>Bowley, A. L. (1901). <em>Elements of Statistics</em>. P. S. King &amp; Son. The quartile skewness coefficient (chapter 8).</p></li>
+<li><p>Kendall, M. G., and Stuart, A. <em>The Advanced Theory of Statistics</em>, Vol. 1. Charles Griffin (several editions). The mean-minus-median skewness measure (chapter 8).</p></li>
+</ul>
+</section>
+<section id="papers-cited-in-the-manual">
+<h2>Papers cited in the manual<a class="headerlink" href="#papers-cited-in-the-manual" title="Link to this heading">#</a></h2>
+<section id="chapter-3-aggregation">
+<h3>Chapter 3: aggregation<a class="headerlink" href="#chapter-3-aggregation" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Working, H. (1960). Note on the correlation of first differences of averages in a random chain. <em>Econometrica</em>, 28(4), 916–918. <a class="reference external" href="https://doi.org/10.2307/1907574">doi:10.2307/1907574</a></p></li>
+</ul>
+</section>
+<section id="chapter-4-interpolation-and-disaggregation">
+<h3>Chapter 4: interpolation and disaggregation<a class="headerlink" href="#chapter-4-interpolation-and-disaggregation" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Chow, G. C., and Lin, A. (1971). Best linear unbiased interpolation, distribution, and extrapolation of time series by related series. <em>Review of Economics and Statistics</em>, 53(4), 372–375. <a class="reference external" href="https://doi.org/10.2307/1928739">doi:10.2307/1928739</a></p></li>
+<li><p>Denton, F. T. (1971). Adjustment of monthly or quarterly series to annual totals: an approach based on quadratic minimization. <em>Journal of the American Statistical Association</em>, 66(333), 99–102. <a class="reference external" href="https://doi.org/10.1080/01621459.1971.10482227">doi:10.1080/01621459.1971.10482227</a></p></li>
+<li><p>Cholette, P. A. (1984). Adjusting sub-annual series to yearly benchmarks. <em>Survey Methodology</em>, 10(1), 35–49.</p></li>
+<li><p>Fernández, R. B. (1981). A methodological note on the estimation of time series. <em>Review of Economics and Statistics</em>, 63(3), 471–476. <a class="reference external" href="https://doi.org/10.2307/1924371">doi:10.2307/1924371</a></p></li>
+<li><p>Litterman, R. B. (1983). A random walk, Markov model for the distribution of time series. <em>Journal of Business &amp; Economic Statistics</em>, 1(2), 169–173. <a class="reference external" href="https://doi.org/10.1080/07350015.1983.10509336">doi:10.1080/07350015.1983.10509336</a></p></li>
+</ul>
+</section>
+<section id="chapter-5-seasonal-adjustment">
+<h3>Chapter 5: seasonal adjustment<a class="headerlink" href="#chapter-5-seasonal-adjustment" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Cleveland, R. B., Cleveland, W. S., McRae, J. E., and Terpenning, I. (1990). STL: a seasonal-trend decomposition procedure based on loess. <em>Journal of Official Statistics</em>, 6(1), 3–73.</p></li>
+</ul>
+</section>
+<section id="chapter-6-detrending-and-filtering">
+<h3>Chapter 6: detrending and filtering<a class="headerlink" href="#chapter-6-detrending-and-filtering" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Hodrick, R. J., and Prescott, E. C. (1997). Postwar U.S. business cycles: an empirical investigation. <em>Journal of Money, Credit and Banking</em>, 29(1), 1–16. <a class="reference external" href="https://doi.org/10.2307/2953682">doi:10.2307/2953682</a></p></li>
+<li><p>Ravn, M. O., and Uhlig, H. (2002). On adjusting the Hodrick-Prescott filter for the frequency of observations. <em>Review of Economics and Statistics</em>, 84(2), 371–376. <a class="reference external" href="https://doi.org/10.1162/003465302317411604">doi:10.1162/003465302317411604</a></p></li>
+<li><p>Stock, J. H., and Watson, M. W. (1999). Forecasting inflation. <em>Journal of Monetary Economics</em>, 44(2), 293–335. <a class="reference external" href="https://doi.org/10.1016/S0304-3932(99)00027-6">doi:10.1016/S0304-3932(99)00027-6</a></p></li>
+<li><p>Hamilton, J. D. (2018). Why you should never use the Hodrick-Prescott filter. <em>Review of Economics and Statistics</em>, 100(5), 831–843. <a class="reference external" href="https://doi.org/10.1162/rest_a_00706">doi:10.1162/rest_a_00706</a></p></li>
+<li><p>Baxter, M., and King, R. G. (1999). Measuring business cycles: approximate band-pass filters for economic time series. <em>Review of Economics and Statistics</em>, 81(4), 575–593. <a class="reference external" href="https://doi.org/10.1162/003465399558454">doi:10.1162/003465399558454</a></p></li>
+<li><p>Christiano, L. J., and Fitzgerald, T. J. (2003). The band pass filter. <em>International Economic Review</em>, 44(2), 435–465. <a class="reference external" href="https://doi.org/10.1111/1468-2354.t01-1-00076">doi:10.1111/1468-2354.t01-1-00076</a></p></li>
+<li><p>Beveridge, S., and Nelson, C. R. (1981). A new approach to decomposition of economic time series into permanent and transitory components with particular attention to measurement of the “business cycle”. <em>Journal of Monetary Economics</em>, 7(2), 151–174. <a class="reference external" href="https://doi.org/10.1016/0304-3932(81)90040-4">doi:10.1016/0304-3932(81)90040-4</a></p></li>
+<li><p>Kamber, G., Morley, J., and Wong, B. (2018). Intuitive and reliable estimates of the output gap from a Beveridge-Nelson filter. <em>Review of Economics and Statistics</em>, 100(3), 550–566. <a class="reference external" href="https://doi.org/10.1162/REST_a_00691">doi:10.1162/REST_a_00691</a></p></li>
+<li><p>Evans, G., and Reichlin, L. (1994). Information, forecasts, and measurement of the business cycle. <em>Journal of Monetary Economics</em>, 33(2), 233–254. <a class="reference external" href="https://doi.org/10.1016/0304-3932(94)90002-7">doi:10.1016/0304-3932(94)90002-7</a></p></li>
+<li><p>Blanchard, O. J., and Quah, D. (1989). The dynamic effects of aggregate demand and supply disturbances. <em>American Economic Review</em>, 79(4), 655–673.</p></li>
+<li><p>Lubik, T. A., Matthes, C., and Verona, F. (2019). Assessing U.S. aggregate fluctuations across time and frequencies. Federal Reserve Bank of Richmond Working Paper 19-06. <a class="reference external" href="https://doi.org/10.21144/wp19-06">doi:10.21144/wp19-06</a></p></li>
+<li><p>Clark, P. K. (1987). The cyclical component of U.S. economic activity. <em>Quarterly Journal of Economics</em>, 102(4), 797–814. <a class="reference external" href="https://doi.org/10.2307/1884282">doi:10.2307/1884282</a></p></li>
+<li><p>Clark, P. K. (1989). Trend reversion in real output and unemployment. <em>Journal of Econometrics</em>, 40(1), 15–32. <a class="reference external" href="https://doi.org/10.1016/0304-4076(89)90027-4">doi:10.1016/0304-4076(89)90027-4</a></p></li>
+<li><p>Slutzky, E. (1937). The summation of random causes as the source of cyclic processes. <em>Econometrica</em>, 5(2), 105–146. <a class="reference external" href="https://doi.org/10.2307/1907241">doi:10.2307/1907241</a></p></li>
+<li><p>Cogley, T., and Nason, J. M. (1995). Effects of the Hodrick-Prescott filter on trend and difference stationary time series: implications for business cycle research. <em>Journal of Economic Dynamics and Control</em>, 19(1–2), 253–278. <a class="reference external" href="https://doi.org/10.1016/0165-1889(93)00781-X">doi:10.1016/0165-1889(93)00781-X</a></p></li>
+</ul>
+</section>
+<section id="chapter-8-business-cycles">
+<h3>Chapter 8: business cycles<a class="headerlink" href="#chapter-8-business-cycles" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Harding, D., and Pagan, A. (2002). Dissecting the cycle: a methodological investigation. <em>Journal of Monetary Economics</em>, 49(2), 365–381. <a class="reference external" href="https://doi.org/10.1016/S0304-3932(01)00108-8">doi:10.1016/S0304-3932(01)00108-8</a></p></li>
+<li><p>Kydland, F. E., and Prescott, E. C. (1990). Business cycles: real facts and a monetary myth. <em>Federal Reserve Bank of Minneapolis Quarterly Review</em>, 14(2), 3–18. <a class="reference external" href="https://doi.org/10.21034/qr.1421">doi:10.21034/qr.1421</a></p></li>
+<li><p>Groeneveld, R. A., and Meeden, G. (1984). Measuring skewness and kurtosis. <em>The Statistician</em>, 33(4), 391–399. <a class="reference external" href="https://doi.org/10.2307/2987742">doi:10.2307/2987742</a></p></li>
+<li><p>Moors, J. J. A. (1988). A quantile alternative for kurtosis. <em>The Statistician</em>, 37(1), 25–32. <a class="reference external" href="https://doi.org/10.2307/2348376">doi:10.2307/2348376</a></p></li>
+<li><p>Hogg, R. V. (1972). More light on the kurtosis and related statistics. <em>Journal of the American Statistical Association</em>, 67(338), 422–424. <a class="reference external" href="https://doi.org/10.1080/01621459.1972.10482402">doi:10.1080/01621459.1972.10482402</a></p></li>
+<li><p>Crow, E. L., and Siddiqui, M. M. (1967). Robust estimation of location. <em>Journal of the American Statistical Association</em>, 62(318), 353–389. <a class="reference external" href="https://doi.org/10.1080/01621459.1967.10482914">doi:10.1080/01621459.1967.10482914</a></p></li>
+<li><p>Kim, T.-H., and White, H. (2004). On more robust estimation of skewness and kurtosis. <em>Finance Research Letters</em>, 1(1), 56–73. <a class="reference external" href="https://doi.org/10.1016/S1544-6123(03)00003-5">doi:10.1016/S1544-6123(03)00003-5</a> (Not cited in the text; collects the robust measures used in chapter 8 and their values under normality.)</p></li>
+<li><p>Bai, J., and Ng, S. (2002). Determining the number of factors in approximate factor models. <em>Econometrica</em>, 70(1), 191–221. <a class="reference external" href="https://doi.org/10.1111/1468-0262.00273">doi:10.1111/1468-0262.00273</a></p></li>
+</ul>
+</section>
+<section id="chapter-9-diagnostics">
+<h3>Chapter 9: diagnostics<a class="headerlink" href="#chapter-9-diagnostics" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Dickey, D. A., and Fuller, W. A. (1979). Distribution of the estimators for autoregressive time series with a unit root. <em>Journal of the American Statistical Association</em>, 74(366a), 427–431. <a class="reference external" href="https://doi.org/10.1080/01621459.1979.10482531">doi:10.1080/01621459.1979.10482531</a></p></li>
+<li><p>Kwiatkowski, D., Phillips, P. C. B., Schmidt, P., and Shin, Y. (1992). Testing the null hypothesis of stationarity against the alternative of a unit root. <em>Journal of Econometrics</em>, 54(1–3), 159–178. <a class="reference external" href="https://doi.org/10.1016/0304-4076(92)90104-Y">doi:10.1016/0304-4076(92)90104-Y</a></p></li>
+<li><p>Zivot, E., and Andrews, D. W. K. (1992). Further evidence on the great crash, the oil-price shock, and the unit-root hypothesis. <em>Journal of Business &amp; Economic Statistics</em>, 10(3), 251–270. <a class="reference external" href="https://doi.org/10.1080/07350015.1992.10509904">doi:10.1080/07350015.1992.10509904</a></p></li>
+<li><p>Ghysels, E., and Perron, P. (1993). The effect of seasonal adjustment filters on tests for a unit root. <em>Journal of Econometrics</em>, 55(1–2), 57–98.</p></li>
+<li><p>Ljung, G. M., and Box, G. E. P. (1978). On a measure of lack of fit in time series models. <em>Biometrika</em>, 65(2), 297–303. <a class="reference external" href="https://doi.org/10.1093/biomet/65.2.297">doi:10.1093/biomet/65.2.297</a></p></li>
+</ul>
+</section>
+<section id="chapter-10-crisis-dummies">
+<h3>Chapter 10: crisis dummies<a class="headerlink" href="#chapter-10-crisis-dummies" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Hamilton, J. D. (1989). A new approach to the economic analysis of nonstationary time series and the business cycle. <em>Econometrica</em>, 57(2), 357–384. <a class="reference external" href="https://doi.org/10.2307/1912559">doi:10.2307/1912559</a></p></li>
+<li><p>Harding and Pagan (2002), above, for the concordance index.</p></li>
+</ul>
+</section>
+<section id="chapter-11-paper-figures">
+<h3>Chapter 11: paper figures<a class="headerlink" href="#chapter-11-paper-figures" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Kilian, L. (2009). Not all oil price shocks are alike: disentangling demand and supply shocks in the crude oil market. <em>American Economic Review</em>, 99(3), 1053–1069. <a class="reference external" href="https://doi.org/10.1257/aer.99.3.1053">doi:10.1257/aer.99.3.1053</a></p></li>
+</ul>
+</section>
+</section>
+<section id="software-and-data">
+<h2>Software and data<a class="headerlink" href="#software-and-data" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>econts</strong> and this book’s source: <a class="reference external" href="https://github.com/hmorao95/econ-time-series-manual">github.com/hmorao95/econ-time-series-manual</a>. <code class="docutils literal notranslate"><span class="pre">econts.load</span></code> reads the bundled FRED snapshot or fetches any FRED series.</p></li>
+<li><p><strong>FRED</strong>, Federal Reserve Bank of St. Louis: <a class="reference external" href="https://fred.stlouisfed.org">fred.stlouisfed.org</a>. The source of every bundled series.</p></li>
+<li><p><strong>pandas</strong>: <a class="reference external" href="https://pandas.pydata.org">pandas.pydata.org</a>. McKinney, W. (2010). Data structures for statistical computing in Python. <em>Proceedings of the 9th Python in Science Conference</em>, 56–61. <a class="reference external" href="https://doi.org/10.25080/Majora-92bf1922-00a">doi:10.25080/Majora-92bf1922-00a</a></p></li>
+<li><p><strong>statsmodels</strong>: <a class="reference external" href="https://www.statsmodels.org">statsmodels.org</a>. Seabold, S., and Perktold, J. (2010). Statsmodels: econometric and statistical modeling with Python. <em>Proceedings of the 9th Python in Science Conference</em>, 92–96. <a class="reference external" href="https://doi.org/10.25080/Majora-92bf1922-011">doi:10.25080/Majora-92bf1922-011</a></p></li>
+<li><p><strong>X-13ARIMA-SEATS</strong>, US Census Bureau: <a class="reference external" href="https://www.census.gov/data/software/x13as.html">census.gov/data/software/x13as.html</a>. The <code class="docutils literal notranslate"><span class="pre">x13as</span></code> executable that <code class="docutils literal notranslate"><span class="pre">statsmodels.tsa.x13</span></code> calls.</p></li>
+<li><p><strong>R <code class="docutils literal notranslate"><span class="pre">seasonal</span></code></strong>, the most convenient X-13 interface in R: Sax, C., and Eddelbuettel, D. (2018). Seasonal adjustment by X-13ARIMA-SEATS in R. <em>Journal of Statistical Software</em>, 87(11). <a class="reference external" href="https://doi.org/10.18637/jss.v087.i11">doi:10.18637/jss.v087.i11</a></p></li>
+<li><p><strong>JDemetra+</strong>, the seasonal adjustment software recommended by Eurostat and the ECB: <a class="reference external" href="https://github.com/jdemetra">github.com/jdemetra</a></p></li>
+<li><p><strong>R <code class="docutils literal notranslate"><span class="pre">tempdisagg</span></code></strong>, the reference implementation of Denton, Chow–Lin, Fernández and Litterman: <a class="reference external" href="https://cran.r-project.org/package=tempdisagg">cran.r-project.org/package=tempdisagg</a>. Sax, C., and Steiner, P. (2013). Temporal disaggregation of time series. <em>The R Journal</em>, 5(2), 80–87. <a class="reference external" href="https://doi.org/10.32614/RJ-2013-028">doi:10.32614/RJ-2013-028</a></p></li>
+<li><p><strong>Empirical Macro Toolbox</strong> (MATLAB), by Filippo Ferroni: <a class="reference external" href="https://naffe15.github.io/EMT/">naffe15.github.io/EMT</a>. Several recipes in chapters 2, 3, 6, 7 and 8 port its functions; its <a class="reference external" href="https://naffe15.github.io/_pages/function_map.html">function map</a> lists the originals.</p></li>
+<li><p><strong>housestyle</strong>, the figure package of chapter 11: <a class="reference external" href="https://github.com/hmorao95/housestyle">github.com/hmorao95/housestyle</a></p></li>
+<li><p><strong>Time Series Analysis with Python</strong>, by Filippo Maria Bianchi: <a class="reference external" href="https://github.com/FilippoMB/python-time-series-handbook">github.com/FilippoMB/python-time-series-handbook</a>. The model for this book’s structure (summaries, exercises and a knowledge test).</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks/00"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="knowledge_test.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Knowledge test</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#books">Books</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#papers-cited-in-the-manual">Papers cited in the manual</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-3-aggregation">Chapter 3: aggregation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-4-interpolation-and-disaggregation">Chapter 4: interpolation and disaggregation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-5-seasonal-adjustment">Chapter 5: seasonal adjustment</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-6-detrending-and-filtering">Chapter 6: detrending and filtering</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-8-business-cycles">Chapter 8: business cycles</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-9-diagnostics">Chapter 9: diagnostics</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-10-crisis-dummies">Chapter 10: crisis dummies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chapter-11-paper-figures">Chapter 11: paper figures</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#software-and-data">Software and data</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Hugo Morão
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
