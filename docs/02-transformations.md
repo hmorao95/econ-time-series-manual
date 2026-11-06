@@ -114,7 +114,63 @@ Deflate with the price index that matches the aggregate (wages by CPI for
 purchasing power, output by its own deflator). For mixed frequencies, first
 bring the deflator to the frequency of the nominal series (chapter 3).
 
-## Standardizing
+## Demeaning, standardizing and scaling
+
+Demeaning subtracts a mean; *which* mean is the decision. The full-sample
+mean (EMT `demean`) is the default; pandas skips `NaN` when computing it.
+
+```python
+g_ip = 100 * np.log(ip).diff()  # monthly IP growth, %
+demeaned = g_ip - g_ip.mean()  # full-sample mean
+print(round(g_ip.mean(), 3), round(demeaned.mean(), 12))
+```
+
+**By regime.** Trend growth was higher before 2000. Demeaning each regime by
+its own mean removes the shift that a single mean would leave in:
+
+```python
+regime = np.where(g_ip.index < "2000-01-01", "pre-2000", "2000+")
+print(g_ip.groupby(regime).mean().round(3))
+by_regime = g_ip - g_ip.groupby(regime).transform("mean")
+```
+
+**By calendar month.** Subtracting each month's average growth removes a
+stable seasonal pattern: a crude seasonal adjustment (chapter 5 does it
+properly).
+
+```python
+g_nsa = 100 * np.log(load("RSXFSN")).diff()
+by_month = g_nsa - g_nsa.groupby(g_nsa.index.month).transform("mean")
+print(g_nsa.std().round(2), "->", by_month.std().round(2))  # most variance was seasonal
+```
+
+**By unit, in a panel (the within transformation).** With several
+countries in long format, subtract each country's mean: this is what a
+fixed-effects regression does. Subtracting each period's cross-country mean
+as well gives the two-way transformation.
+
+```python
+unemp = (
+    pd.concat(
+        {
+            "US": load("UNRATE").to_period("M").resample("Q").mean(),
+            "PT": load("LRHUTTTTPTQ156S").to_period("Q"),
+        },
+        names=["country", "date"],
+    )
+    .rename("u")
+    .loc[:, "1983":"2019"]
+    .reset_index()
+)
+
+unemp["within"] = unemp["u"] - unemp.groupby("country")["u"].transform("mean")
+unemp["two_way"] = unemp["within"] - unemp.groupby("date")["within"].transform("mean")
+print(unemp.groupby("country")[["u", "within"]].mean().round(2))
+```
+
+**Standardizing** divides the demeaned series by its standard deviation
+(EMT `standard`), so series in different units can be compared or combined
+(as the factor model of chapter 8 does):
 
 ```python
 def zscore(s: pd.Series) -> pd.Series:
@@ -125,8 +181,23 @@ z = zscore(100 * np.log(gdp).diff().dropna())
 print(z.describe().round(2))
 ```
 
-Standardize on the **estimation sample** only; reusing full-sample moments in
-a forecasting exercise leaks future information.
+Other common scalings:
+
+```python
+scalings = pd.DataFrame(
+    {
+        "% deviation from mean": 100 * (ip / ip.mean() - 1),
+        "index, first obs = 100": 100 * ip / ip.dropna().iloc[0],
+        "min-max [0, 1]": (ip - ip.min()) / (ip.max() - ip.min()),
+    }
+)
+print(scalings.tail(2).round(2))
+```
+
+Demean and standardize on the **estimation sample** only; reusing
+full-sample moments in a forecasting exercise leaks future information
+(chapter 7's `expanding()` gives the real-time version). Demeaning a series
+with a trend does not make it stationary: detrend it instead (chapter 6).
 
 ## Splicing series with a level break
 

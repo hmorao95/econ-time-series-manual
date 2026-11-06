@@ -212,6 +212,121 @@ unemployment rate is strongly countercyclical, mostly contemporaneously.
 The price level is countercyclical, most strongly a year *before* the GDP
 cycle (Kydland and Prescott, 1990, read this as evidence of supply shocks).
 
+## Asymmetry and fat tails: robust moments
+
+Are recessions sharper than expansions? Skewness and kurtosis answer that,
+but the classical estimators are dominated by a few extreme quarters.
+Quantile-based estimators are not (EMT `skewness_` and `kurtosis_`). Each
+has a known value under normality: 0 for every skewness measure; 3, 1.23,
+2.59 and 2.91 for the four kurtosis measures.
+
+```python
+def robust_skewness(s: pd.Series) -> pd.Series:
+    s = s.dropna()
+    q1, q2, q3 = s.quantile([0.25, 0.5, 0.75])
+    return pd.Series(
+        {
+            "classical": s.skew(),
+            "Bowley (quartiles)": (q3 + q1 - 2 * q2) / (q3 - q1),
+            "Groeneveld-Meeden": (s.mean() - q2) / (s - q2).abs().mean(),
+            "Kendall-Stuart": (s.mean() - q2) / s.std(),
+        }
+    )
+
+
+def robust_kurtosis(s: pd.Series) -> pd.Series:
+    s = s.dropna()
+    q = s.quantile([0.025, 0.125, 0.25, 0.375, 0.625, 0.75, 0.875, 0.975])
+    v, n = np.sort(s.to_numpy()), len(s)
+    tail, half = max(1, round(0.05 * n)), n // 2
+    return pd.Series(
+        {
+            "classical": s.kurt() + 3,
+            "Moors (octiles)": (q[0.875] - q[0.625] + q[0.375] - q[0.125])
+            / (q[0.75] - q[0.25]),
+            "Hogg": (v[-tail:].mean() - v[:tail].mean())
+            / (v[-half:].mean() - v[:half].mean()),
+            "Crow-Siddiqui": (q[0.975] - q[0.025]) / (q[0.75] - q[0.25]),
+        }
+    )
+
+
+g = y.diff()  # quarterly GDP growth, log points
+samples = {"to 2019": g[:"2019"], "to 2026": g}
+skew = pd.DataFrame({k: robust_skewness(s) for k, s in samples.items()})
+kurt = pd.DataFrame({k: robust_kurtosis(s) for k, s in samples.items()})
+kurt["normal"] = [3, 1.23, 2.59, 2.91]
+print(skew.round(2))
+print(kurt.round(2))
+```
+
+Adding the 2020 quarters turns classical skewness from about 0 to −1 and
+multiplies classical kurtosis by four (4.7 to 20.7). The quantile-based
+measures move little (Moors not at all), and all of them sit above their
+normal values even before 2020: GDP growth has fat tails, but no clear
+asymmetry. Two observations should not change a stylized fact: report a
+robust measure next to the classical one.
+
+## A common cycle from many indicators
+
+No single monthly indicator is "the cycle". The first principal component
+of several standardized indicators is a simple coincident index: the common
+movement they share (EMT `pc_T`, normalized so that $F'F/T = I$). All
+inputs are in growth rates, signed so that a rise is good news, and
+standardized, since otherwise the most volatile series dominates.
+
+```python
+monthly = (
+    pd.DataFrame(
+        {
+            "industrial production": 100 * np.log(load("INDPRO")).diff(),
+            "payrolls": 100 * np.log(load("PAYEMS")).diff(),
+            "real retail sales": 100 * np.log(load("RSXFS") / load("CPIAUCSL")).diff(),
+            "unemployment (-)": -load("UNRATE").diff(),
+            "jobless claims (-)": -100
+            * np.log(load("ICSA").resample("MS").mean()).diff(),
+        }
+    )
+    .loc["1993":"2019"]
+    .dropna()
+)
+
+Z = (monthly - monthly.mean()) / monthly.std()  # standardize
+U, S, Vt = np.linalg.svd(Z.to_numpy(), full_matrices=False)
+T = len(Z)
+factor = pd.Series(U[:, 0] * np.sqrt(T), index=Z.index)  # F'F/T = 1
+loadings = pd.Series(Vt[0] * S[0] / np.sqrt(T), index=Z.columns)
+if loadings.sum() < 0:  # sign is arbitrary
+    factor, loadings = -factor, -loadings
+
+print("variance share of each component:", (S**2 / (S**2).sum()).round(2))
+print(loadings.round(2))
+factor_q = factor.to_period("M").resample("Q").mean()
+print("corr with GDP growth:", round(factor_q.corr(g.reindex(factor_q.index)), 2))
+```
+
+```python
+smooth = factor.rolling(3).mean()
+fig, ax = plt.subplots()
+ax.plot(smooth.index, smooth, color="k", lw=1.2)
+on = rec.loc["1993":"2019"]
+for q in on.index[on == 1]:
+    ax.axvspan(q.start_time, q.end_time, color="0.85", lw=0, zorder=0)
+ax.axhline(0, color="k", lw=0.6)
+ax.set_title("Coincident factor (3-month average) and NBER recessions")
+# figure: coincident_factor
+```
+
+![Coincident factor](img/coincident_factor.png)
+
+One component explains about two-fifths of the variance of the five
+indicators, loads positively on all of them, and correlates 0.7 with GDP
+growth. It falls sharply in both recessions of the sample. With many
+series (dozens to hundreds), choose the number of factors with the Bai and
+Ng (2002) criteria (EMT `numbfactor`) and handle missing data with the EM
+algorithm or `sm.tsa.DynamicFactorMQ`, which also mixes monthly and
+quarterly series.
+
 ## Pitfalls
 
 * BBQ on a noisy series finds spurious cycles; smooth or use a longer window

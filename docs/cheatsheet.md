@@ -24,7 +24,11 @@
 | 3m/3m annualized | `a = s.rolling(3).mean(); 100 * ((a / a.shift(3)) ** 4 - 1)` |
 | Rebase to 2015 = 100 | `100 * s / s["2015"].mean()` |
 | Deflate | `nominal / deflator * 100` |
+| Demean | `s - s.mean()` |
+| Demean by regime / by month | `s - s.groupby(key).transform("mean")` |
+| Panel within transformation | `df.u - df.groupby("country").u.transform("mean")` |
 | Z-score | `(s - s.mean()) / s.std()` |
+| Min-max | `(s - s.min()) / (s.max() - s.min())` |
 
 ## Aggregation (high → low frequency)
 
@@ -66,6 +70,8 @@
 | Hamilton | OLS of `y` on `y.shift(8)` … `y.shift(11)` |
 | Baxter–King | `sm.tsa.filters.bkfilter(y, low=6, high=32, K=12)` |
 | Christiano–Fitzgerald | `sm.tsa.filters.cffilter(y, low=6, high=32, drift=True)` |
+| Beveridge–Nelson, bivariate | VAR on growth and a cyclical variable, $-e_1'F(I-F)^{-1}Z_t$ (chapter 6) |
+| Blanchard–Quah | VAR with long-run impact lower triangular (chapter 6) |
 | HP λ | 6.25 annual, 1600 quarterly, 129600 monthly |
 
 ## Rolling windows
@@ -103,6 +109,14 @@
 | Labels, ticks, zero line | `hs.finish(ax, "Title", "Units", "Months")` |
 | 300 dpi export | `hs.export(fig, "name")` |
 | Cumulative IRF bands | `var.irf(24).cum_errband_mc(orth=True, signif=0.32)` |
+
+## Cycle statistics
+
+| Task | Code |
+|---|---|
+| Bowley skewness | `(q3 + q1 - 2 * q2) / (q3 - q1)` |
+| Moors kurtosis (normal: 1.23) | octile ratio, chapter 8 |
+| First principal component | `U, S, Vt = np.linalg.svd(Z)`; `U[:, 0] * np.sqrt(T)` |
 
 ## Diagnostics
 
