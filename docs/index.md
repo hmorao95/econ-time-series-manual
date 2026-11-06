@@ -17,6 +17,7 @@ as written on real US data.
 | [8. Business cycles](08-business-cycles.md) | BBQ turning-point dating, phase statistics, stylized facts |
 | [9. Diagnostics](09-diagnostics.md) | ADF/KPSS, structural breaks, ACF/PACF, outliers |
 | [10. Crisis dummies and recession bands](10-crisis-dummies.md) | Portugal: reading a chronology, grey and hatched bands, episode and slope dummies, event studies, pulse/step dummies, Markov-switching probabilities |
+| [11. Paper-quality figures](11-paper-figures.md) | SVAR impulse responses with bands, specification comparisons, shaded time series and historical decompositions with `housestyle` |
 | [Cheat sheet](cheatsheet.md) | one-line answers to the most common tasks |
 
 ## Setup
@@ -59,7 +60,9 @@ bond yield and a quarterly Portuguese recession chronology
 
 ## Credits
 
-Several recipes in chapters 3, 6, 7 and 8 port functions of Filippo Ferroni's
+Chapter 11 draws its figures with
+[housestyle](https://github.com/hmorao95/housestyle). Several recipes in
+chapters 3, 6, 7 and 8 port functions of Filippo Ferroni's
 [Empirical Macro Toolbox](https://naffe15.github.io/EMT/) (MATLAB) to
 Python; its [function map](https://naffe15.github.io/_pages/function_map.html)
 lists the originals. Data: FRED, Federal Reserve Bank of St. Louis.
