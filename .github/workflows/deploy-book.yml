@@ -1,0 +1,27 @@
+name: Deploy book
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-book
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.13"
+      - run: uv sync
+      - name: Build the book (notebooks are stored with their outputs)
+        run: uv run jupyter-book build .
+      - name: Publish to the gh-pages branch
+        run: uv run ghp-import -n -p -f _build/html

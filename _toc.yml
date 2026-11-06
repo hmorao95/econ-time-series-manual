@@ -1,0 +1,25 @@
+# Table of contents: https://jupyterbook.org/customize/toc.html
+format: jb-book
+root: notebooks/00/intro
+parts:
+  - caption: Chapters
+    numbered: true
+    chapters:
+      - file: notebooks/01/dates-frequencies
+      - file: notebooks/02/transformations
+      - file: notebooks/03/aggregation
+      - file: notebooks/04/interpolation
+      - file: notebooks/05/seasonal-adjustment
+      - file: notebooks/06/detrending
+      - file: notebooks/07/rolling-smoothing
+      - file: notebooks/08/business-cycles
+      - file: notebooks/09/diagnostics
+      - file: notebooks/10/crisis-dummies
+      - file: notebooks/11/paper-figures
+  - caption: Reference
+    numbered: false
+    chapters:
+      - file: notebooks/00/toolkit
+      - file: notebooks/00/cheatsheet
+      - file: notebooks/00/knowledge_test
+      - file: notebooks/00/resources

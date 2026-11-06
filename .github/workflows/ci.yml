@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  chapters:
+  toolkit:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -18,5 +18,17 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: uv sync
       - run: uv run ruff check .
-      - run: uv run pytest -q
-      - run: uv run mkdocs build --strict
+      - run: uv run pytest -q tests/test_econts.py
+
+  book:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.13"
+      - run: uv sync
+      - name: Run every notebook (warnings as errors)
+        run: uv run pytest -q tests/test_notebooks.py
+      - name: Build the book
+        run: uv run jupyter-book build . --warningiserror --keep-going

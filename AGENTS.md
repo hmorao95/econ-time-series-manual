@@ -1,21 +1,32 @@
 # Agent notes
 
-A manual, not a library. The deliverable is `docs/*.md`; `src/tsmanual` only
-loads the bundled data and runs the chapters.
+Two deliverables in one repo, modelled on FilippoMB/python-time-series-handbook:
 
-- Every ```python block in `docs/NN-*.md` runs in CI (`uv run pytest`) with
-  warnings as errors, sharing one namespace per chapter. Keep blocks runnable
-  in order; use ```text for output and ```py for code that must not run
-  (e.g. exports that would write files).
+- **The book**: a Jupyter Book (`_config.yml`, `_toc.yml`) of one notebook
+  per chapter in `notebooks/NN/<topic>.ipynb`, front and back matter in
+  `notebooks/00/` (intro, toolkit, cheat sheet, knowledge test, resources).
+  Each chapter: setup cell (installs `econts[book]` on Colab) → sections →
+  Summary (rules of thumb) → Exercises. Published to GitHub Pages by
+  `.github/workflows/deploy-book.yml` (gh-pages branch).
+- **The toolkit**: the `econts` package in `src/econts/`, one module per
+  topic, typed, with docstrings and tests in `tests/test_econts.py`.
+  Notebooks keep their recipes inline for teaching, followed by an
+  "In your projects" note naming the toolkit function. When a recipe changes
+  in a notebook, change the toolkit function and its test too.
+
+Conventions:
+
+- Notebooks are stored **with outputs**. After editing one, re-run it with
+  `uv run python scripts/execute_notebooks.py notebooks/NN/<file>.ipynb`.
+  `tests/test_notebooks.py` re-runs every notebook with warnings as errors.
+  Tag a cell `skip-execution` when it needs an external program (X-13).
 - Numbers quoted in the prose come from the bundled FRED snapshot in
-  `src/tsmanual/data/`. If you change code or refresh data, rerun the chapter
-  (`uv run python -m tsmanual.runner docs/NN-*.md`) and update the quoted numbers.
-- Figures: a `# figure: name` line saves `docs/img/name.png`; regenerate with
-  `uv run python -m tsmanual.runner --figures`.
-- Keep chapters short: quick rules, recipe, pitfalls. New methods must earn
-  their place.
-- Chapter 11 depends on hmorao95/housestyle (public), pinned by commit in
-  pyproject.toml; bump the pin to pick up style changes.
+  `src/econts/data/`. If you change code or refresh data, re-run the notebook
+  and update the quoted numbers.
+- Keep chapters short: rules, recipe, pitfalls. New methods must earn their
+  place.
+- `housestyle` (public, pinned by commit) is an optional extra (`book`) and a
+  dev dependency; the toolkit itself must not import it.
 - Supported: Python >= 3.10, pandas 2.2+ and 3.x, statsmodels >= 0.15. Write
   code that behaves the same on pandas 2 and 3 (e.g. `pct_change(fill_method=None)`).
 - Workflow: branch, PR, squash-merge when CI is green.
