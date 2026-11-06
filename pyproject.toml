@@ -1,0 +1,50 @@
+[project]
+name = "econ-time-series-manual"
+version = "0.1.0"
+description = "A practical manual on manipulating economic time series in Python: frequencies, growth rates, aggregation, interpolation, seasonal adjustment, detrending."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Hugo Morão", email = "hfmorao@gmail.com" }]
+dependencies = [
+    "pandas>=2.2",
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "statsmodels>=0.15",
+    "matplotlib>=3.8",
+]
+
+[project.urls]
+Repository = "https://github.com/hmorao95/econ-time-series-manual"
+
+[dependency-groups]
+dev = ["pytest>=8.1", "ruff>=0.4.8", "codespell>=2.2.6"]
+docs = ["mkdocs>=1.6,<2", "mkdocs-material>=9.5"]
+
+[tool.uv]
+default-groups = ["dev", "docs"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tsmanual"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "D"]
+ignore = ["D203", "D213"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D"]
+"scripts/*" = ["D"]
+
+[tool.codespell]
+ignore-words-list = "trough"
+skip = "*.csv,*.lock,site"
