@@ -126,6 +126,29 @@ Modules: `transform`, `aggregate`, `disagg`, `seasonal`, `filters`,
 [toolkit page](notebooks/00/toolkit.md) lists every function and the chapter
 that explains it. `load(series_id, online=True)` fetches any FRED series.
 
+### Command line
+
+Installing the toolkit also installs an `econts` command (python-fire), for
+shell scripts or Stata/MATLAB pipelines. A source is a CSV file (first column
+dates) or a FRED id; results print, or go to a CSV with `--out`:
+
+```bash
+econts series                                            # bundled FRED ids
+econts load GDPC1 --out gdp.csv
+econts growth CPIAUCSL --kind yoy
+econts aggregate PAYEMS --freq QS --how mean
+econts filter gdp.csv --log --method hamilton --out cycle.csv
+econts disagg GDPC1 --indicators INDPRO,PAYEMS --method chow-lin --out gdp_m.csv
+econts seasonal RSXFSN --calendar --out sales_sa.csv
+econts bbq GDPC1 --log
+econts unitroot UNRATE
+econts outliers ICSA --log
+```
+
+`econts <command> --help` lists every flag. Filter methods: `hp`, `hp1`
+(one-sided HP), `hamilton`, `bk`, `cf`, `bn`, `poly`, `haar`. Expected errors
+(a missing file, an unknown method) print one line and exit with code 1.
+
 ## 🚀 Running the notebooks
 
 Open any chapter in Colab with the buttons above (the first cell installs the

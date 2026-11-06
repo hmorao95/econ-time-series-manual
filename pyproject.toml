@@ -12,6 +12,7 @@ dependencies = [
     "scipy>=1.11",
     "statsmodels>=0.15",
     "matplotlib>=3.8",
+    "fire>=0.6",
 ]
 
 [project.optional-dependencies]
@@ -19,6 +20,9 @@ dependencies = [
 book = [
     "housestyle @ git+https://github.com/hmorao95/housestyle@d147bdb9d0c8d377ef79100f3daddab274d17b6a",
 ]
+
+[project.scripts]
+econts = "econts.cli:main"
 
 [project.urls]
 Book = "https://hmorao95.github.io/econ-time-series-manual"

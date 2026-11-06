@@ -18,17 +18,29 @@ def periods_per_year(index: pd.Index) -> int:
         ValueError: the frequency cannot be determined.
 
     """
-    if isinstance(index, pd.PeriodIndex):
-        code = index.freqstr[0]
-    else:
-        freq = index.freqstr if index.freq is not None else pd.infer_freq(index[:8])
-        if freq is None:
-            raise ValueError("cannot infer the frequency; use .asfreq() first")
-        code = freq.lstrip("0123456789")[0]
     table = {"A": 1, "Y": 1, "Q": 4, "M": 12, "W": 52, "B": 260, "D": 365}
-    if code not in table:
-        raise ValueError(f"unsupported frequency {code!r}")
-    return table[code]
+    if isinstance(index, pd.PeriodIndex) or index.freq is not None:
+        code = index.freqstr.lstrip("0123456789")[0]
+        if code not in table:
+            raise ValueError(f"unsupported frequency {code!r}")
+        return table[code]
+    # no declared frequency: read it off the typical spacing between dates
+    if len(index) < 3:
+        raise ValueError("cannot infer the frequency of fewer than 3 dates")
+    seconds = index.values.astype("datetime64[s]").astype(np.int64)
+    days = float(np.median(np.diff(seconds))) / 86_400
+    for low, high, ppy in (
+        (0.5, 1.5, 365),
+        (6, 8, 52),
+        (27, 32, 12),
+        (88, 93, 4),
+        (364, 367, 1),
+    ):
+        if low <= days <= high:
+            return ppy
+    raise ValueError(
+        f"cannot infer the frequency from a typical spacing of {days:.1f} days"
+    )
 
 
 def growth(s: pd.Series, kind: GrowthKind = "pop", ppy: int | None = None) -> pd.Series:

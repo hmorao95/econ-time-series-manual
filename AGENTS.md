@@ -14,6 +14,11 @@ Two deliverables in one repo, modelled on FilippoMB/python-time-series-handbook:
   "In your projects" note naming the toolkit function. When a recipe changes
   in a notebook, change the toolkit function and its test too.
 
+- **The CLI**: `econts.cli` (python-fire `_Cli`, methods return text,
+  `main()` exits 1 on expected errors), entry point `econts`, tested in
+  `tests/test_cli.py` with bundled data only. New toolkit functions that make
+  sense from a shell get a subcommand.
+
 Conventions:
 
 - Notebooks are stored **with outputs**. After editing one, re-run it with
