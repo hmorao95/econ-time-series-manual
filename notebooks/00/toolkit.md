@@ -11,6 +11,29 @@ Pin a commit or tag for reproducible projects, e.g.
 `pip install "econts @ git+https://github.com/hmorao95/econ-time-series-manual@<commit>"`.
 Each function has a docstring (`help(econts.filters.hamilton_filter)`).
 
+## Command line
+
+Installing the toolkit also installs an `econts` command (python-fire), for
+shell scripts or Stata/MATLAB pipelines. A source is a CSV file (first column
+dates) or a FRED id; results print, or go to a CSV with `--out`:
+
+```bash
+econts series                                            # bundled FRED ids
+econts load GDPC1 --out gdp.csv
+econts growth CPIAUCSL --kind yoy
+econts aggregate PAYEMS --freq QS --how mean
+econts filter gdp.csv --log --method hamilton --out cycle.csv
+econts disagg GDPC1 --indicators INDPRO,PAYEMS --method chow-lin --out gdp_m.csv
+econts seasonal RSXFSN --calendar --out sales_sa.csv
+econts bbq GDPC1 --log
+econts unitroot UNRATE
+econts outliers ICSA --log
+```
+
+`econts <command> --help` lists every flag. Filter methods: `hp`, `hp1`
+(one-sided HP), `hamilton`, `bk`, `cf`, `bn`, `poly`, `haar`. Expected errors
+(a missing file, an unknown method) print one line and exit with code 1.
+
 ## Data: `econts`
 
 | Function | Does | Chapter |

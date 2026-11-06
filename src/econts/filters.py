@@ -90,7 +90,7 @@ def beveridge_nelson(y: pd.Series, p: int = 4) -> Pair:
     """
     dy = y.diff().dropna()
     x = dy - dy.mean()
-    phi = sm.tsa.AutoReg(x, lags=p, trend="n").fit().params.to_numpy()
+    phi = np.asarray(sm.tsa.AutoReg(x.to_numpy(), lags=p, trend="n").fit().params)
     F = _companion(phi.reshape(p, 1, 1))
     X = pd.concat([x.shift(j) for j in range(p)], axis=1)
     gain = (F @ np.linalg.inv(np.eye(p) - F))[0]
@@ -111,7 +111,7 @@ def bn_bq_bivariate(y: pd.Series, z: pd.Series, p: int = 8) -> pd.DataFrame:
 
     """
     X = pd.DataFrame({"dy": y.diff(), "z": z}).dropna()
-    var = sm.tsa.VAR(X).fit(p)
+    var = sm.tsa.VAR(X.to_numpy()).fit(p)  # arrays: no date-frequency warnings
     k = 2
     F = _companion(var.coefs)
     Z = pd.concat([(X - X.mean()).shift(j) for j in range(p)], axis=1)
@@ -122,10 +122,10 @@ def bn_bq_bivariate(y: pd.Series, z: pd.Series, p: int = 8) -> pd.DataFrame:
     A1_inv = np.linalg.inv(A1)
     B0 = A1 @ np.linalg.cholesky(A1_inv @ var.sigma_u @ A1_inv.T)
     B0[:, 1] *= np.sign(B0[0, 1])
-    e = var.resid.to_numpy() @ np.linalg.inv(B0).T
+    e = np.asarray(var.resid) @ np.linalg.inv(B0).T
     theta = var.ma_rep(len(e) - 1) @ B0
     demand = [theta[: t + 1, 0, 1] @ e[t::-1, 1] for t in range(len(e))]
-    bq = pd.Series(np.cumsum(demand), index=var.resid.index)
+    bq = pd.Series(np.cumsum(demand), index=X.index[p:])
     return pd.DataFrame({"bn": bn, "bq": bq}).reindex(y.index)
 
 
