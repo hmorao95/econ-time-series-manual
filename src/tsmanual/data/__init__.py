@@ -23,6 +23,9 @@ SERIES: dict[str, str] = {
     "ICSA": "Initial jobless claims, weekly (ending Saturday), SA (DOL)",
     "DCOILBRENTEU": "Brent crude oil spot price, daily, $/barrel (EIA)",
     "USRECQ": "NBER recession indicator, quarterly, 1 = recession (FRED)",
+    "CLVMNACSCAB1GQPT": "Portugal real GDP, quarterly, SA, 2010 EUR mn (Eurostat)",
+    "LRHUTTTTPTQ156S": "Portugal unemployment rate, quarterly, SA, percent (OECD)",
+    "IRLTLT01PTM156N": "Portugal 10-year government bond yield, monthly, % (OECD)",
 }
 
 

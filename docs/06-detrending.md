@@ -32,7 +32,7 @@ rec = load("USRECQ").asfreq("QS").reindex(y.index)
 
 
 def shade_recessions(ax, rec=rec):
-    """Shade NBER recession quarters on a time-series plot (EMT's `shade`)."""
+    """Shade NBER recession quarters (EMT's `shade`; chapter 10 generalizes it)."""
     on = rec.fillna(0).astype(bool)
     starts = on.index[on & ~on.shift(1, fill_value=False)]
     ends = on.index[on & ~on.shift(-1, fill_value=False)]

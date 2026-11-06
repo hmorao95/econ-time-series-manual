@@ -78,6 +78,18 @@
 | Calendar-time window | `s.rolling("30D").mean()` |
 | Rolling regression | `RollingOLS(y, X, window=40).fit()` |
 
+## Dummies and bands
+
+| Task | Code |
+|---|---|
+| Parse day-first dates | `pd.to_datetime(s, format="%d/%m/%Y")` |
+| Shade a quarterly dummy on any chart | `ax.axvspan(q.start_time, q.end_time, color="0.85", lw=0)` per episode |
+| Hatched band | `ax.axvspan(a, b, fc="none", ec="C3", hatch="///")` |
+| Pulse / step dummy | `(idx == pd.Period(at, "Q")).astype(float)` / `(idx >= ...)` |
+| Slope dummy (interaction) | `smf.ols("du ~ g * rec", data=df)` |
+| Episode dummies | `pd.get_dummies(episode_label, dtype=float)` |
+| Recession probability | `sm.tsa.MarkovRegression(g, k_regimes=2).fit().smoothed_marginal_probabilities` |
+
 ## Diagnostics
 
 | Task | Code |

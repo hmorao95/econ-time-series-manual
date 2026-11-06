@@ -16,6 +16,7 @@ as written on real US data.
 | [7. Rolling windows and smoothing](07-rolling-smoothing.md) | moving averages, EWMA, 3m/3m, rolling volatility and regressions, lags and leads |
 | [8. Business cycles](08-business-cycles.md) | BBQ turning-point dating, phase statistics, stylized facts |
 | [9. Diagnostics](09-diagnostics.md) | ADF/KPSS, structural breaks, ACF/PACF, outliers |
+| [10. Crisis dummies and recession bands](10-crisis-dummies.md) | Portugal: reading a chronology, grey and hatched bands, episode and slope dummies, event studies, pulse/step dummies, Markov-switching probabilities |
 | [Cheat sheet](cheatsheet.md) | one-line answers to the most common tasks |
 
 ## Setup
@@ -44,7 +45,9 @@ cpi = load("CPIAUCSL", online=True)  # latest vintage from FRED
 `SERIES` lists what is bundled: real and nominal GDP, the GDP deflator,
 industrial production, retail sales (adjusted and not), CPI, unemployment
 (adjusted and not), payrolls, weekly jobless claims, daily Brent and the
-NBER recession indicator. `load(..., online=True)` fetches any FRED series.
+NBER recession indicator, plus Portuguese GDP, unemployment, the 10-year
+bond yield and a quarterly Portuguese recession chronology
+(`DATA_DIR / "pt_recessions.txt"`). `load(..., online=True)` fetches any FRED series.
 
 ## Conventions
 
