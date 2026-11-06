@@ -30,6 +30,7 @@ nav:
   - 7. Rolling windows and smoothing: 07-rolling-smoothing.md
   - 8. Business cycles: 08-business-cycles.md
   - 9. Diagnostics: 09-diagnostics.md
+  - 10. Crisis dummies and bands: 10-crisis-dummies.md
   - Cheat sheet: cheatsheet.md
 
 markdown_extensions:

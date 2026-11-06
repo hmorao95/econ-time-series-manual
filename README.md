@@ -21,7 +21,8 @@ as written on real US data (a bundled FRED snapshot).
 7. [Rolling windows, smoothing, lags and leads](docs/07-rolling-smoothing.md)
 8. [Business cycles](docs/08-business-cycles.md) (BBQ turning points, phase statistics, stylized facts)
 9. [Diagnostics](docs/09-diagnostics.md) (ADF/KPSS, Zivot–Andrews, ACF/PACF, outliers)
-10. [Cheat sheet](docs/cheatsheet.md)
+10. [Crisis dummies and recession bands](docs/10-crisis-dummies.md) (Portugal: grey bands, episode and slope dummies, event studies, Markov-switching probabilities)
+11. [Cheat sheet](docs/cheatsheet.md)
 
 The chapters read fine on GitHub. For the rendered site with search and
 math, build it locally (below).
@@ -38,8 +39,8 @@ uv run mkdocs serve          # http://127.0.0.1:8000
 ```python
 from tsmanual import load
 
-gdp = load("GDPC1")                   # bundled FRED snapshot
-cpi = load("CPIAUCSL", online=True)   # latest vintage from FRED
+gdp = load("GDPC1")  # bundled FRED snapshot
+cpi = load("CPIAUCSL", online=True)  # latest vintage from FRED
 ```
 
 ## Development
