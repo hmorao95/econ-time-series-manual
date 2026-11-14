@@ -1,0 +1,1209 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>6. Detrending and filtering: trend and cycle &#8212; Economic Time Series in Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/06/detrending';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="7. Rolling windows, smoothing, lags and leads" href="../07/rolling-smoothing.html" />
+    <link rel="prev" title="5. Seasonal adjustment" href="../05/seasonal-adjustment.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../00/intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Economic Time Series in Python</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapters</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01/dates-frequencies.html">1. Dates, periods and frequencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02/transformations.html">2. Transformations: logs, growth rates, indices, deflators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03/aggregation.html">3. Temporal aggregation: from high to low frequency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04/interpolation.html">4. Interpolation and temporal disaggregation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05/seasonal-adjustment.html">5. Seasonal adjustment</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">6. Detrending and filtering: trend and cycle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../07/rolling-smoothing.html">7. Rolling windows, smoothing, lags and leads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../08/business-cycles.html">8. Business cycles: turning points and stylized facts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../09/diagnostics.html">9. Diagnostics: stationarity, autocorrelation, outliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../10/crisis-dummies.html">10. Crisis dummies and recession bands: Portugal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../11/paper-figures.html">11. Paper-quality figures: impulse responses and decompositions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00/toolkit.html">The <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../00/cheatsheet.html">Cheat sheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../00/knowledge_test.html">Knowledge test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../00/resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/hmorao95/econ-time-series-manual/blob/main/notebooks/06/detrending.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/hmorao95/econ-time-series-manual" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/hmorao95/econ-time-series-manual/issues/new?title=Issue%20on%20page%20%2Fnotebooks/06/detrending.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/notebooks/06/detrending.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Detrending and filtering: trend and cycle</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deterministic-trends">6.1. Deterministic trends</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-differences">6.2. First differences</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hodrickprescott-filter">6.3. Hodrick–Prescott filter</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-sided-hp">6.3.1. One-sided HP</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hamilton-2018-regression-filter">6.4. Hamilton (2018) regression filter</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#band-pass-filters-baxterking-and-christianofitzgerald">6.5. Band-pass filters: Baxter–King and Christiano–Fitzgerald</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#beveridgenelson-decomposition">6.6. Beveridge–Nelson decomposition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bivariate-beveridgenelson-and-blanchardquah">6.7. Bivariate Beveridge–Nelson and Blanchard–Quah</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#haar-wavelet-filter">6.8. Haar wavelet filter</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unobserved-components-models">6.9. Unobserved components models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparing-the-cycles">6.10. Comparing the cycles</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#which-filter">6.11. Which filter?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfalls">6.12. Pitfalls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">6.13. Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">6.14. Exercises</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="detrending-and-filtering-trend-and-cycle">
+<h1><span class="section-number">6. </span>Detrending and filtering: trend and cycle<a class="headerlink" href="#detrending-and-filtering-trend-and-cycle" title="Link to this heading">#</a></h1>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Setup: install the toolkit when running on Google Colab, and a plotting style</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="k">if</span> <span class="s2">"google.colab"</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+    <span class="o">%</span><span class="k">pip</span> install -q "econts[book] @ git+https://github.com/hmorao95/econ-time-series-manual"
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    <span class="s2">"figure.figsize"</span><span class="p">:</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">3.6</span><span class="p">),</span> <span class="s2">"axes.grid"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"grid.alpha"</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="s2">"axes.spines.top"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"axes.spines.right"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"legend.frameon"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<p>Splitting a series into a slow-moving <strong>trend</strong> and a <strong>cycle</strong> is the
+first step of most business-cycle work (output gaps, credit gaps, stylized
+facts). There is no unique right answer: every filter embeds a definition of
+“trend”, and the cycles they produce can differ a lot, especially at the end
+of the sample, which is usually the part you care about.</p>
+<p>Several recipes below are Python ports of functions in Filippo Ferroni’s
+<a class="reference external" href="https://naffe15.github.io/EMT/">Empirical Macro Toolbox</a> (MATLAB):
+<code class="docutils literal notranslate"><span class="pre">polydet</span></code>, <code class="docutils literal notranslate"><span class="pre">polydet_break</span></code>, <code class="docutils literal notranslate"><span class="pre">one_sided_hpfilter_serial</span></code>, <code class="docutils literal notranslate"><span class="pre">hamfilter</span></code>,
+<code class="docutils literal notranslate"><span class="pre">BNuniv</span></code>, <code class="docutils literal notranslate"><span class="pre">wavefilter</span></code> and <code class="docutils literal notranslate"><span class="pre">shade</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">econts</span><span class="w"> </span><span class="kn">import</span> <span class="n">load</span>
+
+<span class="n">y</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="s2">"GDPC1"</span><span class="p">))</span><span class="o">.</span><span class="n">asfreq</span><span class="p">(</span><span class="s2">"QS"</span><span class="p">)</span>  <span class="c1"># log real GDP x 100</span>
+<span class="n">rec</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"USRECQ"</span><span class="p">)</span><span class="o">.</span><span class="n">asfreq</span><span class="p">(</span><span class="s2">"QS"</span><span class="p">)</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">shade_recessions</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">rec</span><span class="o">=</span><span class="n">rec</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Shade NBER recession quarters (EMT's `shade`; chapter 10 generalizes it)."""</span>
+    <span class="n">on</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">starts</span> <span class="o">=</span> <span class="n">on</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">on</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">on</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="kc">False</span><span class="p">)]</span>
+    <span class="n">ends</span> <span class="o">=</span> <span class="n">on</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">on</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">on</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="kc">False</span><span class="p">)]</span>
+    <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">starts</span><span class="p">,</span> <span class="n">ends</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">e</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">QuarterEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">"0.85"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.dummies import shade
+</pre></div>
+</div>
+</div>
+<section id="deterministic-trends">
+<h2><span class="section-number">6.1. </span>Deterministic trends<a class="headerlink" href="#deterministic-trends" title="Link to this heading">#</a></h2>
+<p>Fit a polynomial in time; the residual is the cycle. A <strong>break</strong> lets the
+trend change level and slope at a known date (e.g. a productivity slowdown).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">poly_detrend</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">break_at</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Polynomial trend, optionally a separate polynomial after `break_at`."""</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vander</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">break_at</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">after</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="n">break_at</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">X</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">after</span><span class="p">),</span> <span class="n">X</span> <span class="o">*</span> <span class="n">after</span><span class="p">])</span>
+    <span class="n">beta</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">trend</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">X</span> <span class="o">@</span> <span class="n">beta</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">y</span> <span class="o">-</span> <span class="n">trend</span><span class="p">,</span> <span class="n">trend</span>
+
+
+<span class="n">cyc_lin</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">poly_detrend</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">cyc_quad</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">poly_detrend</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">cyc_brk</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">poly_detrend</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">break_at</span><span class="o">=</span><span class="s2">"1973-10-01"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.filters import poly_detrend
+</pre></div>
+</div>
+</div>
+<p>Deterministic trends assume the trend never moves after a shock. If GDP has
+a unit root, the “cycle” inherits it and wanders for decades.</p>
+</section>
+<section id="first-differences">
+<h2><span class="section-number">6.2. </span>First differences<a class="headerlink" href="#first-differences" title="Link to this heading">#</a></h2>
+<p>The growth rate is a valid stationary transformation, but it is not a cycle
+in levels: it peaks in the middle of a recovery, not at the top of the boom.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">growth</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="hodrickprescott-filter">
+<h2><span class="section-number">6.3. </span>Hodrick–Prescott filter<a class="headerlink" href="#hodrickprescott-filter" title="Link to this heading">#</a></h2>
+<p>HP picks the trend <span class="math notranslate nohighlight">\(\tau\)</span> that minimizes
+<span class="math notranslate nohighlight">\(\sum_t (y_t-\tau_t)^2 + \lambda \sum_t (\Delta^2 \tau_t)^2\)</span>.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Frequency</p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\lambda\)</span> (Ravn–Uhlig, 2002)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Annual</p></td>
+<td><p>6.25 (100 is the older convention)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Quarterly</p></td>
+<td><p>1600</p></td>
+</tr>
+<tr class="row-even"><td><p>Monthly</p></td>
+<td><p>129600 (14400 is the older convention)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Basel III credit-to-GDP gap (quarterly)</p></td>
+<td><p>400000, one-sided</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cyc_hp</span><span class="p">,</span> <span class="n">trend_hp</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">hpfilter</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lamb</span><span class="o">=</span><span class="mi">1600</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="one-sided-hp">
+<h3><span class="section-number">6.3.1. </span>One-sided HP<a class="headerlink" href="#one-sided-hp" title="Link to this heading">#</a></h3>
+<p>The two-sided filter uses future data. At the end of the sample, the trend
+is pulled towards the last observations and the gap shrinks toward zero.
+The one-sided version re-runs HP on each expanding sample and keeps only the
+last point, so every value uses only data up to that date
+(EMT <code class="docutils literal notranslate"><span class="pre">one_sided_hpfilter_serial</span></code>, by Alexander Meyer-Gohde).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">hp_one_sided</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">lamb</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1600</span><span class="p">,</span> <span class="n">min_obs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""One-sided HP: the trend at t is the end point of HP on y[:t+1]."""</span>
+    <span class="n">trend</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">min_obs</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">trend</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">hpfilter</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="n">t</span><span class="p">],</span> <span class="n">lamb</span><span class="o">=</span><span class="n">lamb</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">y</span> <span class="o">-</span> <span class="n">trend</span><span class="p">,</span> <span class="n">trend</span>
+
+
+<span class="n">cyc_hp1</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">hp_one_sided</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.filters import hp, hp_one_sided
+</pre></div>
+</div>
+</div>
+<p>The one-sided trend is the Kalman-filter estimate of the HP state-space
+model (Stock and Watson, 1999; see the UC section below), which is how the
+Basel credit-to-GDP gap is computed in practice.</p>
+</section>
+</section>
+<section id="hamilton-2018-regression-filter">
+<h2><span class="section-number">6.4. </span>Hamilton (2018) regression filter<a class="headerlink" href="#hamilton-2018-regression-filter" title="Link to this heading">#</a></h2>
+<p>Hamilton argues HP creates spurious dynamics and proposes a regression: the
+cycle is the error of forecasting <span class="math notranslate nohighlight">\(y_{t+h}\)</span> from its values at <span class="math notranslate nohighlight">\(t, t-1,
+\dots, t-p+1\)</span>. For quarterly data, <span class="math notranslate nohighlight">\(h = 8\)</span> (two years) and <span class="math notranslate nohighlight">\(p = 4\)</span>
+(EMT <code class="docutils literal notranslate"><span class="pre">hamfilter</span></code>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">hamilton_filter</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Cycle = residual of y_t on a constant and y_{t-h}, ..., y_{t-h-p+1}."""</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">({</span><span class="sa">f</span><span class="s2">"y(t-</span><span class="si">{</span><span class="n">h</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">j</span><span class="si">}</span><span class="s2">)"</span><span class="p">:</span> <span class="n">y</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="n">h</span> <span class="o">+</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)},</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">y</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">"y"</span><span class="p">),</span> <span class="n">X</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="n">fit</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">"y"</span><span class="p">],</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s2">"y"</span><span class="p">)))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">fit</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="n">fit</span><span class="o">.</span><span class="n">fittedvalues</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+
+<span class="n">cyc_ham</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">hamilton_filter</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">cyc_rw8</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">y</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>  <span class="c1"># Hamilton's "random walk" special case</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.filters import hamilton_filter
+</pre></div>
+</div>
+</div>
+<p>The first <span class="math notranslate nohighlight">\(h+p-1\)</span> observations are lost. Hamilton’s choice is two years ahead
+with a year of lags: <span class="math notranslate nohighlight">\(h = 24, p = 12\)</span> for monthly data and <span class="math notranslate nohighlight">\(h = 2, p = 1\)</span> for
+annual data.</p>
+</section>
+<section id="band-pass-filters-baxterking-and-christianofitzgerald">
+<h2><span class="section-number">6.5. </span>Band-pass filters: Baxter–King and Christiano–Fitzgerald<a class="headerlink" href="#band-pass-filters-baxterking-and-christianofitzgerald" title="Link to this heading">#</a></h2>
+<p>Band-pass filters keep cycles with periods between <code class="docutils literal notranslate"><span class="pre">low</span></code> and <code class="docutils literal notranslate"><span class="pre">high</span></code>
+(6 and 32 quarters, after Burns and Mitchell). Baxter–King (BK) is a
+symmetric moving average and loses <code class="docutils literal notranslate"><span class="pre">K</span></code> observations at each end;
+Christiano–Fitzgerald (CF) is asymmetric and uses the whole sample.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cyc_bk</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">bkfilter</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>  <span class="c1"># loses 12 + 12 obs</span>
+<span class="n">cyc_cf</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">cffilter</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">drift</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="beveridgenelson-decomposition">
+<h2><span class="section-number">6.6. </span>Beveridge–Nelson decomposition<a class="headerlink" href="#beveridgenelson-decomposition" title="Link to this heading">#</a></h2>
+<p>The BN trend is the long-run forecast of the series, net of drift:
+<span class="math notranslate nohighlight">\(\tau_t = y_t + \sum_{h\ge1} E_t[\Delta y_{t+h} - \mu]\)</span>. With an AR(<span class="math notranslate nohighlight">\(p\)</span>) for
+<span class="math notranslate nohighlight">\(\Delta y\)</span> in companion form <span class="math notranslate nohighlight">\(X_t = F X_{t-1} + e_t\)</span>, the cycle is
+<span class="math notranslate nohighlight">\(c_t = -e_1' F (I-F)^{-1} X_t\)</span> (EMT <code class="docutils literal notranslate"><span class="pre">BNuniv</span></code>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">beveridge_nelson</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Univariate BN decomposition with an AR(p) for the first difference."""</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">dy</span> <span class="o">-</span> <span class="n">dy</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">AutoReg</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s2">"n"</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">p</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
+    <span class="n">F</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">phi</span>
+    <span class="n">F</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [x_t, ..., x_{t-p+1}]</span>
+    <span class="n">long_run</span> <span class="o">=</span> <span class="n">F</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">-</span> <span class="n">F</span><span class="p">)</span>
+    <span class="n">cycle</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">X</span> <span class="o">@</span> <span class="n">long_run</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">cycle</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">cycle</span><span class="p">)</span>
+
+
+<span class="n">cyc_bn</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">beveridge_nelson</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.filters import beveridge_nelson
+</pre></div>
+</div>
+</div>
+<p>The BN cycle of US GDP from a low-order AR is small and noisy: positive
+growth shocks raise the trend more than one for one. Kamber, Morley and Wong
+(2018) fix this by imposing a low signal-to-noise ratio (the “BN filter”).</p>
+</section>
+<section id="bivariate-beveridgenelson-and-blanchardquah">
+<h2><span class="section-number">6.7. </span>Bivariate Beveridge–Nelson and Blanchard–Quah<a class="headerlink" href="#bivariate-beveridgenelson-and-blanchardquah" title="Link to this heading">#</a></h2>
+<p>A second variable that moves with the cycle, such as the unemployment rate,
+sharpens the split (Evans and Reichlin, 1994). Fit a VAR to output growth and
+unemployment, then:</p>
+<ul class="simple">
+<li><p><strong>multivariate BN</strong>: the trend is the long-run forecast of output from the
+VAR, so the cycle is <span class="math notranslate nohighlight">\(c_t = -e_1' F (I-F)^{-1} Z_t\)</span> with <span class="math notranslate nohighlight">\(F\)</span> the companion
+matrix and <span class="math notranslate nohighlight">\(Z_t\)</span> the stacked, demeaned state;</p></li>
+<li><p><strong>Blanchard–Quah (1989)</strong>: identify two shocks by assuming only one of them
+(the “supply” shock) moves output in the long run. The cycle is the
+cumulated contribution of the other (“demand”) shock.</p></li>
+</ul>
+<p>Both come from one VAR (EMT <code class="docutils literal notranslate"><span class="pre">BNBQbiv</span></code>, by Fabio Canova). Eight lags, as in
+Blanchard and Quah, on 1948–2019:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u_q</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"UNRATE"</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"QS"</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">"dy"</span><span class="p">:</span> <span class="n">y</span><span class="o">.</span><span class="n">diff</span><span class="p">(),</span> <span class="s2">"u"</span><span class="p">:</span> <span class="n">u_q</span><span class="p">})</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"1948-04-01"</span><span class="p">:</span><span class="s2">"2019"</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">p</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span>
+<span class="n">var2</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">VAR</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+<span class="c1"># multivariate BN</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">k</span> <span class="o">*</span> <span class="n">p</span><span class="p">,</span> <span class="n">k</span> <span class="o">*</span> <span class="n">p</span><span class="p">))</span>
+<span class="n">F</span><span class="p">[:</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">var2</span><span class="o">.</span><span class="n">coefs</span><span class="p">))</span>
+<span class="n">F</span><span class="p">[</span><span class="n">k</span><span class="p">:,</span> <span class="p">:</span><span class="o">-</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([(</span><span class="n">X</span> <span class="o">-</span> <span class="n">X</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">long_run</span> <span class="o">=</span> <span class="n">F</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">p</span><span class="p">)</span> <span class="o">-</span> <span class="n">F</span><span class="p">)</span>
+<span class="n">cyc_bn2</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">Z</span> <span class="o">@</span> <span class="n">long_run</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Z</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="c1"># Blanchard-Quah: long-run impact matrix lower triangular</span>
+<span class="n">A1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">-</span> <span class="n">var2</span><span class="o">.</span><span class="n">coefs</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">A1_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">A1</span><span class="p">)</span>
+<span class="n">B0</span> <span class="o">=</span> <span class="n">A1</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">A1_inv</span> <span class="o">@</span> <span class="n">var2</span><span class="o">.</span><span class="n">sigma_u</span> <span class="o">@</span> <span class="n">A1_inv</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>  <span class="c1"># u_t = B0 e_t</span>
+<span class="n">B0</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">B0</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># demand shock raises output on impact</span>
+<span class="n">e</span> <span class="o">=</span> <span class="n">var2</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">B0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">var2</span><span class="o">.</span><span class="n">ma_rep</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">@</span> <span class="n">B0</span>  <span class="c1"># structural MA coefficients</span>
+<span class="n">demand</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">"j,j-&gt;"</span><span class="p">,</span> <span class="n">theta</span><span class="p">[:</span> <span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">e</span><span class="p">[</span><span class="n">t</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">e</span><span class="p">))]</span>
+<span class="n">cyc_bq</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">demand</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">var2</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+<span class="n">bn_compare</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">"BN univariate"</span><span class="p">:</span> <span class="n">cyc_bn</span><span class="p">,</span> <span class="s2">"BN bivariate"</span><span class="p">:</span> <span class="n">cyc_bn2</span><span class="p">,</span> <span class="s2">"BQ"</span><span class="p">:</span> <span class="n">cyc_bq</span><span class="p">}</span>
+<span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">bn_compare</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">bn_compare</span><span class="o">.</span><span class="n">index</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>        BN univariate  BN bivariate    BQ
+USRECQ                                   
+0.0             -0.02          0.11  0.18
+1.0              0.11         -0.39 -0.80
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.filters import bn_bq_bivariate
+
+cycles = bn_bq_bivariate(y, u_q, p=8)   # columns: bn, bq
+</pre></div>
+</div>
+</div>
+<p>The table shows the average cycle in expansions (0) and NBER recessions (1).
+The univariate BN cycle has the <strong>wrong sign</strong>: it is positive in
+recessions, because with output alone a fall in growth signals a lower
+trend. Adding unemployment fixes it: both bivariate cycles are negative in
+recessions, and BQ’s is the larger.</p>
+</section>
+<section id="haar-wavelet-filter">
+<h2><span class="section-number">6.8. </span>Haar wavelet filter<a class="headerlink" href="#haar-wavelet-filter" title="Link to this heading">#</a></h2>
+<p>Lubik, Matthes and Verona (2019) split a series with the Haar wavelet into
+components <span class="math notranslate nohighlight">\(D_j\)</span> with periods between <span class="math notranslate nohighlight">\(2^j\)</span> and <span class="math notranslate nohighlight">\(2^{j+1}\)</span> quarters. Each
+component is the difference between two adjacent moving averages of length
+<span class="math notranslate nohighlight">\(2^{j-1}\)</span>, so the filter is <strong>one-sided</strong> (EMT <code class="docutils literal notranslate"><span class="pre">wavefilter</span></code>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">haar_components</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">levels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Haar wavelet details D1..D_levels; D_j has periods 2^j to 2^(j+1)."""</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">levels</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">out</span><span class="p">[</span><span class="sa">f</span><span class="s2">"D</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="n">m</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="n">w</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+
+<span class="n">D</span> <span class="o">=</span> <span class="n">haar_components</span><span class="p">(</span><span class="n">cyc_brk</span><span class="p">)</span>  <span class="c1"># on the linearly detrended series</span>
+<span class="n">cyc_wav</span> <span class="o">=</span> <span class="n">D</span><span class="p">[</span><span class="s2">"D3"</span><span class="p">]</span> <span class="o">+</span> <span class="n">D</span><span class="p">[</span><span class="s2">"D4"</span><span class="p">]</span>  <span class="c1"># 8-32 quarter business cycle</span>
+<span class="n">trend_wav</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">D</span><span class="p">[[</span><span class="s2">"D1"</span><span class="p">,</span> <span class="s2">"D2"</span><span class="p">,</span> <span class="s2">"D3"</span><span class="p">,</span> <span class="s2">"D4"</span><span class="p">]]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.filters import haar_components, haar_cycle
+</pre></div>
+</div>
+</div>
+<p>Remove the drift first. On a trending series each detail picks up the
+growth rate: a linear trend with slope <span class="math notranslate nohighlight">\(g\)</span> adds <span class="math notranslate nohighlight">\(g\,2^{j-2}\)</span> to <span class="math notranslate nohighlight">\(D_j\)</span>, about
+4.5 pp to <span class="math notranslate nohighlight">\(D_3 + D_4\)</span> for US GDP. Applying the filter to the series minus a
+(broken) linear trend removes this; the details of a linear trend are zero.</p>
+</section>
+<section id="unobserved-components-models">
+<h2><span class="section-number">6.9. </span>Unobserved components models<a class="headerlink" href="#unobserved-components-models" title="Link to this heading">#</a></h2>
+<p>A UC model writes the series as a sum of unobserved trend and cycle
+processes and estimates them with the Kalman filter. HP is a special case:
+an integrated random-walk (“smooth”) trend plus a white-noise cycle, with
+the variance ratio <strong>fixed</strong> at <span class="math notranslate nohighlight">\(1/\lambda\)</span>. The Kalman <em>smoother</em> gives the
+two-sided HP trend and the Kalman <em>filter</em> gives the one-sided one:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hp_uc</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">UnobservedComponents</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">"smooth trend"</span><span class="p">)</span>
+<span class="n">hp_res</span> <span class="o">=</span> <span class="n">hp_uc</span><span class="o">.</span><span class="n">smooth</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">1600</span><span class="p">])</span>  <span class="c1"># sigma2.irregular, sigma2.trend</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"smoother vs HP:"</span><span class="p">,</span> <span class="p">(</span><span class="n">hp_res</span><span class="o">.</span><span class="n">level</span><span class="o">.</span><span class="n">smoothed</span> <span class="o">-</span> <span class="n">trend_hp</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">"filter vs one-sided HP:"</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">hp_res</span><span class="o">.</span><span class="n">level</span><span class="o">.</span><span class="n">filtered</span> <span class="o">-</span> <span class="n">cyc_hp1</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">20</span><span class="p">:]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>smoother vs HP: 0.0002
+filter vs one-sided HP: 0.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>The point of a UC model is to <em>estimate</em> the variances instead of fixing
+them, e.g. Clark’s (1987) local linear trend plus an AR(2) cycle (EMT <code class="docutils literal notranslate"><span class="pre">uc1_</span></code>
+is a Bayesian version). On US GDP alone this runs into the <strong>pile-up
+problem</strong>: maximum likelihood sets the trend variances to zero, and the
+“trend” collapses to a straight line.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">clark</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">UnobservedComponents</span><span class="p">(</span>
+    <span class="n">y</span><span class="p">[:</span><span class="s2">"2019"</span><span class="p">],</span> <span class="n">level</span><span class="o">=</span><span class="s2">"local linear trend"</span><span class="p">,</span> <span class="n">autoregressive</span><span class="o">=</span><span class="mi">2</span>
+<span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">clark</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># sigma2.level and sigma2.trend ~ 0</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>sigma2.irregular    0.069
+sigma2.level        0.000
+sigma2.trend        0.000
+sigma2.ar           0.490
+ar.L1               1.489
+ar.L2              -0.536
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<p>Univariate UC decompositions of GDP are weakly identified. Add information
+(Clark, 1989, adds unemployment through Okun’s law; Phillips-curve models add
+inflation), use priors (Bayesian UC), or fix the signal-to-noise ratio as HP
+does.</p>
+</section>
+<section id="comparing-the-cycles">
+<h2><span class="section-number">6.10. </span>Comparing the cycles<a class="headerlink" href="#comparing-the-cycles" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cycles</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">"linear+break"</span><span class="p">:</span> <span class="n">cyc_brk</span><span class="p">,</span>
+        <span class="s2">"HP"</span><span class="p">:</span> <span class="n">cyc_hp</span><span class="p">,</span>
+        <span class="s2">"HP one-sided"</span><span class="p">:</span> <span class="n">cyc_hp1</span><span class="p">,</span>
+        <span class="s2">"Hamilton"</span><span class="p">:</span> <span class="n">cyc_ham</span><span class="p">,</span>
+        <span class="s2">"BK"</span><span class="p">:</span> <span class="n">cyc_bk</span><span class="p">,</span>
+        <span class="s2">"CF"</span><span class="p">:</span> <span class="n">cyc_cf</span><span class="p">,</span>
+        <span class="s2">"BN"</span><span class="p">:</span> <span class="n">cyc_bn</span><span class="p">,</span>
+        <span class="s2">"wavelet"</span><span class="p">:</span> <span class="n">cyc_wav</span><span class="p">,</span>
+        <span class="s2">"BN bivariate"</span><span class="p">:</span> <span class="n">cyc_bn2</span><span class="p">,</span>
+        <span class="s2">"BQ"</span><span class="p">:</span> <span class="n">cyc_bq</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="n">sample</span> <span class="o">=</span> <span class="n">cycles</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"1960"</span><span class="p">:</span><span class="s2">"2019"</span><span class="p">]</span>
+<span class="n">stats</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">"std"</span><span class="p">:</span> <span class="n">sample</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span>
+        <span class="s2">"AR(1)"</span><span class="p">:</span> <span class="n">sample</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">autocorr</span><span class="p">()),</span>
+        <span class="s2">"corr with HP"</span><span class="p">:</span> <span class="n">sample</span><span class="o">.</span><span class="n">corrwith</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s2">"HP"</span><span class="p">]),</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>               std  AR(1)  corr with HP
+linear+break  4.36   0.98          0.44
+HP            1.44   0.87          1.00
+HP one-sided  1.51   0.90          0.50
+Hamilton      3.08   0.93          0.74
+BK            1.35   0.93          0.96
+CF            1.38   0.92          0.87
+BN            0.16   0.38          0.19
+wavelet       2.03   0.97          0.70
+BN bivariate  1.36   0.87          0.22
+BQ            1.00   0.93          0.47
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">cycles</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"1960"</span><span class="p">:,</span> <span class="p">[</span><span class="s2">"HP"</span><span class="p">,</span> <span class="s2">"HP one-sided"</span><span class="p">,</span> <span class="s2">"Hamilton"</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">cycles</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"1960"</span><span class="p">:,</span> <span class="p">[</span><span class="s2">"BK"</span><span class="p">,</span> <span class="s2">"CF"</span><span class="p">,</span> <span class="s2">"wavelet"</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">:</span>
+    <span class="n">shade_recessions</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"</span><span class="si">% o</span><span class="s2">f trend"</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"US real GDP cycle, NBER recessions shaded"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, 'US real GDP cycle, NBER recessions shaded')
+</pre></div>
+</div>
+<img alt="../../_images/89016515fdb3b7f16540c230ce0ddf41092f83c1eff23acc2e42bdc18aeb4e96.png" src="../../_images/89016515fdb3b7f16540c230ce0ddf41092f83c1eff23acc2e42bdc18aeb4e96.png" />
+</div>
+</div>
+<p>The one-sided HP correlates only 0.5 with the two-sided one: the same
+filter tells a different story in real time. In 2007, the one-sided HP said
+output was slightly below trend; with hindsight, the two-sided filter puts it
+about 2% above. And this understates the problem: true real-time estimates
+would also use the GDP data as first published, before revisions. The
+wavelet cycle, also one-sided, shows the other cost: it lags turning points
+(see its 2009 trough in the figure above).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ax</span> <span class="o">=</span> <span class="n">cycles</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"2004"</span><span class="p">:</span><span class="s2">"2011"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"HP"</span><span class="p">,</span> <span class="s2">"HP one-sided"</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="n">shade_recessions</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Output gap: with hindsight (HP) and in real time (one-sided HP)"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, 'Output gap: with hindsight (HP) and in real time (one-sided HP)')
+</pre></div>
+</div>
+<img alt="../../_images/b540eb486626916f796ffdc44eed47c818fe8833e12f49cbc325c8667dd2f191.png" src="../../_images/b540eb486626916f796ffdc44eed47c818fe8833e12f49cbc325c8667dd2f191.png" />
+</div>
+</div>
+</section>
+<section id="which-filter">
+<h2><span class="section-number">6.11. </span>Which filter?<a class="headerlink" href="#which-filter" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Purpose</p></th>
+<th class="head"><p>Use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Stylized facts, historical description</p></td>
+<td><p>HP (two-sided), CF, BK; report two</p></td>
+</tr>
+<tr class="row-odd"><td><p>Real-time gap, early warning (credit gap)</p></td>
+<td><p>one-sided HP, Hamilton</p></td>
+</tr>
+<tr class="row-even"><td><p>Cycle with a specific periodicity</p></td>
+<td><p>CF (full sample) or BK</p></td>
+</tr>
+<tr class="row-odd"><td><p>Structural interpretation, uncertainty bands</p></td>
+<td><p>UC model</p></td>
+</tr>
+<tr class="row-even"><td><p>Permanent vs transitory shocks</p></td>
+<td><p>Beveridge–Nelson (bivariate, or the BN filter); Blanchard–Quah</p></td>
+</tr>
+<tr class="row-odd"><td><p>Quick, one-sided frequency split</p></td>
+<td><p>Haar wavelet</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="pitfalls">
+<h2><span class="section-number">6.12. </span>Pitfalls<a class="headerlink" href="#pitfalls" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>All two-sided filters revise their recent values as data arrive. Compare
+vintages before claiming the economy is “above potential”.</p></li>
+<li><p>The 2020 collapse dominates every regression-based filter that includes
+it (Hamilton, BN, UC). The Hamilton cycle also <strong>echoes</strong> it <span class="math notranslate nohighlight">\(h\)</span> quarters
+later: the 2022 spike in the figure is the 2020Q2 trough entering
+<span class="math notranslate nohighlight">\(y_{t-8}\)</span>. Estimate on pre-2020 data or add outlier dummies.</p></li>
+<li><p>Filters applied to non-logged data give cycles in levels, which grow with
+the series. Log first.</p></li>
+<li><p>A filter can create cycles from white noise (Slutsky effect; Cogley and
+Nason, 1995, for HP). Check that the stylized fact survives other filters.</p></li>
+</ul>
+</section>
+<section id="summary">
+<h2><span class="section-number">6.13. </span>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Detrend <strong>logs × 100</strong>: the cycle is then in percent of trend.</p></li>
+<li><p>The two-sided HP filter is fine for describing history; it is <strong>not</strong>
+fine in real time. Use the one-sided HP or the Hamilton filter for
+anything that pretends to be known at time <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
+<li><p>Band-pass filters (BK, CF) let you choose the periodicities: 6–32
+quarters is the standard business-cycle band.</p></li>
+<li><p>Report results for more than one filter.</p></li>
+</ul>
+</section>
+<section id="exercises">
+<h2><span class="section-number">6.14. </span>Exercises<a class="headerlink" href="#exercises" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Apply the HP filter (λ = 1600) to log real GDP × 100 (<code class="docutils literal notranslate"><span class="pre">GDPC1</span></code>) on 1960–2007 and on 1960–2019. How different is the 2007 output gap in the two runs, and what does this say about end-of-sample estimates?</p></li>
+<li><p>Compute the two-sided HP, one-sided HP and Hamilton cycles of Portuguese real GDP (<code class="docutils literal notranslate"><span class="pre">CLVMNACSCAB1GQPT</span></code>, 1995–2019). Was output above or below trend in 2008Q1 and in 2011Q1 according to each, and which answers could a policymaker have had at the time?</p></li>
+<li><p>Extract the business-cycle component of monthly log industrial production (<code class="docutils literal notranslate"><span class="pre">INDPRO</span></code>, 1960–2019) with Christiano–Fitzgerald (periods 18–96 months) and with HP (λ = 129600). Compare their standard deviations and correlation, and check which one moves more at the end of the sample.</p></li>
+<li><p>Rerun the bivariate Beveridge–Nelson and Blanchard–Quah decompositions with 4 lags instead of 8 (1948–2019). Are both cycles still negative on average in NBER recessions (<code class="docutils literal notranslate"><span class="pre">USRECQ</span></code>), and what does the answer suggest about how much these decompositions depend on the lag choice?</p></li>
+</ol>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks/06"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../05/seasonal-adjustment.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">5. </span>Seasonal adjustment</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../07/rolling-smoothing.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">7. </span>Rolling windows, smoothing, lags and leads</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deterministic-trends">6.1. Deterministic trends</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-differences">6.2. First differences</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hodrickprescott-filter">6.3. Hodrick–Prescott filter</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-sided-hp">6.3.1. One-sided HP</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hamilton-2018-regression-filter">6.4. Hamilton (2018) regression filter</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#band-pass-filters-baxterking-and-christianofitzgerald">6.5. Band-pass filters: Baxter–King and Christiano–Fitzgerald</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#beveridgenelson-decomposition">6.6. Beveridge–Nelson decomposition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bivariate-beveridgenelson-and-blanchardquah">6.7. Bivariate Beveridge–Nelson and Blanchard–Quah</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#haar-wavelet-filter">6.8. Haar wavelet filter</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unobserved-components-models">6.9. Unobserved components models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparing-the-cycles">6.10. Comparing the cycles</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#which-filter">6.11. Which filter?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfalls">6.12. Pitfalls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">6.13. Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">6.14. Exercises</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Hugo Morão
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1073 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>2. Transformations: logs, growth rates, indices, deflators &#8212; Economic Time Series in Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/02/transformations';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="3. Temporal aggregation: from high to low frequency" href="../03/aggregation.html" />
+    <link rel="prev" title="1. Dates, periods and frequencies" href="../01/dates-frequencies.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../00/intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Economic Time Series in Python</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapters</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01/dates-frequencies.html">1. Dates, periods and frequencies</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">2. Transformations: logs, growth rates, indices, deflators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03/aggregation.html">3. Temporal aggregation: from high to low frequency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04/interpolation.html">4. Interpolation and temporal disaggregation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05/seasonal-adjustment.html">5. Seasonal adjustment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06/detrending.html">6. Detrending and filtering: trend and cycle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../07/rolling-smoothing.html">7. Rolling windows, smoothing, lags and leads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../08/business-cycles.html">8. Business cycles: turning points and stylized facts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../09/diagnostics.html">9. Diagnostics: stationarity, autocorrelation, outliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../10/crisis-dummies.html">10. Crisis dummies and recession bands: Portugal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../11/paper-figures.html">11. Paper-quality figures: impulse responses and decompositions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00/toolkit.html">The <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../00/cheatsheet.html">Cheat sheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../00/knowledge_test.html">Knowledge test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../00/resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/hmorao95/econ-time-series-manual/blob/main/notebooks/02/transformations.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/hmorao95/econ-time-series-manual" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/hmorao95/econ-time-series-manual/issues/new?title=Issue%20on%20page%20%2Fnotebooks/02/transformations.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/notebooks/02/transformations.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Transformations: logs, growth rates, indices, deflators</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#growth-rates">2.1. Growth rates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#annual-growth-average-over-average-vs-q4-q4">2.2. Annual growth: average-over-average vs Q4/Q4</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#carry-over-statistical-overhang">2.3. Carry-over (statistical overhang)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rebasing-an-index">2.4. Rebasing an index</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nominal-to-real-deflating">2.5. Nominal to real: deflating</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demeaning-standardizing-and-scaling">2.6. Demeaning, standardizing and scaling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#splicing-series-with-a-level-break">2.7. Splicing series with a level break</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfalls">2.8. Pitfalls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">2.9. Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">2.10. Exercises</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="transformations-logs-growth-rates-indices-deflators">
+<h1><span class="section-number">2. </span>Transformations: logs, growth rates, indices, deflators<a class="headerlink" href="#transformations-logs-growth-rates-indices-deflators" title="Link to this heading">#</a></h1>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Setup: install the toolkit when running on Google Colab, and a plotting style</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="k">if</span> <span class="s2">"google.colab"</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+    <span class="o">%</span><span class="k">pip</span> install -q "econts[book] @ git+https://github.com/hmorao95/econ-time-series-manual"
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    <span class="s2">"figure.figsize"</span><span class="p">:</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">3.6</span><span class="p">),</span> <span class="s2">"axes.grid"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"grid.alpha"</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="s2">"axes.spines.top"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"axes.spines.right"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"legend.frameon"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">econts</span><span class="w"> </span><span class="kn">import</span> <span class="n">load</span>
+
+<span class="n">gdp</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"GDPC1"</span><span class="p">)</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="s2">"Q"</span><span class="p">)</span>
+<span class="n">cpi</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"CPIAUCSL"</span><span class="p">)</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="s2">"M"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="growth-rates">
+<h2><span class="section-number">2.1. </span>Growth rates<a class="headerlink" href="#growth-rates" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Rate</p></th>
+<th class="head"><p>Formula</p></th>
+<th class="head"><p>pandas</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>period on period</p></td>
+<td><p><span class="math notranslate nohighlight">\(y_t / y_{t-1} - 1\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">s.pct_change()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>year on year (quarterly data)</p></td>
+<td><p><span class="math notranslate nohighlight">\(y_t / y_{t-4} - 1\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">s.pct_change(4)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>annualized q/q</p></td>
+<td><p><span class="math notranslate nohighlight">\((y_t / y_{t-1})^4 - 1\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(1</span> <span class="pre">+</span> <span class="pre">s.pct_change())</span> <span class="pre">**</span> <span class="pre">4</span> <span class="pre">-</span> <span class="pre">1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>log difference</p></td>
+<td><p><span class="math notranslate nohighlight">\(100\,(\ln y_t - \ln y_{t-1})\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">100</span> <span class="pre">*</span> <span class="pre">np.log(s).diff()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>annualized log difference</p></td>
+<td><p><span class="math notranslate nohighlight">\(400\,\Delta \ln y_t\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">*</span> <span class="pre">np.log(s).diff()</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">"q/q"</span><span class="p">:</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">gdp</span><span class="o">.</span><span class="n">pct_change</span><span class="p">(),</span>
+        <span class="s2">"q/q saar"</span><span class="p">:</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">gdp</span><span class="o">.</span><span class="n">pct_change</span><span class="p">())</span> <span class="o">**</span> <span class="mi">4</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"y/y"</span><span class="p">:</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">gdp</span><span class="o">.</span><span class="n">pct_change</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
+        <span class="s2">"400 dlog"</span><span class="p">:</span> <span class="mi">400</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">gdp</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">(),</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"2024Q1"</span><span class="p">:]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>         q/q  q/q saar   y/y  400 dlog
+date                                  
+2024Q1  0.36      1.44  2.93      1.43
+2024Q2  0.88      3.58  3.29      3.52
+2024Q3  0.78      3.15  2.95      3.10
+2024Q4  0.60      2.40  2.64      2.38
+2025Q1  0.04      0.14  2.31      0.14
+2025Q2  0.99      4.02  2.42      3.94
+2025Q3  0.96      3.88  2.60      3.81
+2025Q4  0.05      0.21  2.05      0.21
+2026Q1  0.62      2.49  2.64      2.46
+2026Q2  0.55      2.22  2.19      2.20
+2026Q3  0.83      3.37  2.07      3.31
+</pre></div>
+</div>
+</div>
+</div>
+<p>The log approximation is excellent for small changes and poor for large ones:
+the 2020Q2 GDP collapse is −28.0% SAAR but −32.8 in annualized log points.
+Report exact rates; use log differences inside models.</p>
+<p>For monthly data replace 4 by 12. Inflation, the classic case:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">infl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">"m/m"</span><span class="p">:</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">cpi</span><span class="o">.</span><span class="n">pct_change</span><span class="p">(</span><span class="n">fill_method</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+        <span class="s2">"m/m annualized"</span><span class="p">:</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">cpi</span><span class="o">.</span><span class="n">pct_change</span><span class="p">(</span><span class="n">fill_method</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span> <span class="o">**</span> <span class="mi">12</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"y/y"</span><span class="p">:</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">cpi</span><span class="o">.</span><span class="n">pct_change</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="n">fill_method</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">infl</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>          m/m  m/m annualized   y/y
+date                               
+2026-06 -0.42           -4.95  3.46
+2026-07  0.07            0.89  3.30
+2026-08  0.40            4.86  3.35
+2026-09  0.65            8.07  3.72
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="annual-growth-average-over-average-vs-q4-q4">
+<h2><span class="section-number">2.2. </span>Annual growth: average-over-average vs Q4/Q4<a class="headerlink" href="#annual-growth-average-over-average-vs-q4-q4" title="Link to this heading">#</a></h2>
+<p>Annual GDP growth in the press is the growth of the <strong>annual average</strong>.
+Policy forecasts (e.g. FOMC projections) use <strong>Q4 over Q4</strong>. They can differ
+by more than a percentage point.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">annual</span> <span class="o">=</span> <span class="n">gdp</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">gdp</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>  <span class="c1"># SAAR levels: average them</span>
+<span class="n">avg_growth</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">annual</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span>
+<span class="n">q4q4</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">gdp</span><span class="p">[</span><span class="n">gdp</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">quarter</span> <span class="o">==</span> <span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span>
+<span class="n">q4q4</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">q4q4</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">"avg/avg"</span><span class="p">:</span> <span class="n">avg_growth</span><span class="p">,</span> <span class="s2">"Q4/Q4"</span><span class="p">:</span> <span class="n">q4q4</span><span class="p">})</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">2019</span><span class="p">:</span><span class="mi">2025</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>      avg/avg  Q4/Q4
+date                
+2019      2.6    3.4
+2020     -2.1   -0.9
+2021      6.3    5.8
+2022      2.4    1.2
+2023      2.9    3.4
+2024      3.0    2.6
+2025      2.3    2.0
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="carry-over-statistical-overhang">
+<h2><span class="section-number">2.3. </span>Carry-over (statistical overhang)<a class="headerlink" href="#carry-over-statistical-overhang" title="Link to this heading">#</a></h2>
+<p>How much annual growth is “already in the bag” if the series stays flat at its
+last quarter for the rest of the year? It is the last quarter’s level relative
+to the previous year’s average.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">carry_over</span><span class="p">(</span><span class="n">q</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Annual growth in `year` if the series stays at its Q4 level of year-1."""</span>
+    <span class="n">prev</span> <span class="o">=</span> <span class="n">q</span><span class="p">[</span><span class="n">q</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">prev</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">prev</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"carry-over into 2026: </span><span class="si">{</span><span class="n">carry_over</span><span class="p">(</span><span class="n">gdp</span><span class="p">,</span><span class="w"> </span><span class="mi">2026</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>carry-over into 2026: 0.76%
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.transform import carry_over
+</pre></div>
+</div>
+</div>
+</section>
+<section id="rebasing-an-index">
+<h2><span class="section-number">2.4. </span>Rebasing an index<a class="headerlink" href="#rebasing-an-index" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ip</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"INDPRO"</span><span class="p">)</span>
+<span class="n">ip_2015</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">ip</span> <span class="o">/</span> <span class="n">ip</span><span class="p">[</span><span class="s2">"2015"</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>  <span class="c1"># 2015 average = 100</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ip_2015</span><span class="p">[</span><span class="s2">"2015"</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">ip_2015</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100.0 102.9
+</pre></div>
+</div>
+</div>
+</div>
+<p>Rebasing a single series is harmless. Note that <strong>chain-linked volumes</strong>
+are not additive in any reference year: real components do not sum to real
+GDP, so compute contributions to growth from the components’ own growth
+rates and shares, not from differences in levels.</p>
+</section>
+<section id="nominal-to-real-deflating">
+<h2><span class="section-number">2.5. </span>Nominal to real: deflating<a class="headerlink" href="#nominal-to-real-deflating" title="Link to this heading">#</a></h2>
+<p>Real = nominal / price index × 100, with the price index based to 100 in the
+reference year of the real series.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ngdp</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"GDP"</span><span class="p">)</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="s2">"Q"</span><span class="p">)</span>
+<span class="n">defl</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"GDPDEF"</span><span class="p">)</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="s2">"Q"</span><span class="p">)</span>
+<span class="n">real</span> <span class="o">=</span> <span class="n">ngdp</span> <span class="o">/</span> <span class="n">defl</span> <span class="o">*</span> <span class="mi">100</span>  <span class="c1"># deflator is 2017 = 100</span>
+<span class="n">check</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">"implied"</span><span class="p">:</span> <span class="n">real</span><span class="p">,</span> <span class="s2">"published"</span><span class="p">:</span> <span class="n">gdp</span><span class="p">})</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">((</span><span class="n">check</span><span class="p">[</span><span class="s2">"implied"</span><span class="p">]</span> <span class="o">/</span> <span class="n">check</span><span class="p">[</span><span class="s2">"published"</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>  <span class="c1"># &lt; 1e-4: rounding only</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>4.058027189679514e-05
+</pre></div>
+</div>
+</div>
+</div>
+<p>Deflate with the price index that matches the aggregate (wages by CPI for
+purchasing power, output by its own deflator). For mixed frequencies, first
+bring the deflator to the frequency of the nominal series (chapter 3).</p>
+</section>
+<section id="demeaning-standardizing-and-scaling">
+<h2><span class="section-number">2.6. </span>Demeaning, standardizing and scaling<a class="headerlink" href="#demeaning-standardizing-and-scaling" title="Link to this heading">#</a></h2>
+<p>Demeaning subtracts a mean; <em>which</em> mean is the decision. The full-sample
+mean (EMT <code class="docutils literal notranslate"><span class="pre">demean</span></code>) is the default; pandas skips <code class="docutils literal notranslate"><span class="pre">NaN</span></code> when computing it.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">g_ip</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span>  <span class="c1"># monthly IP growth, %</span>
+<span class="n">demeaned</span> <span class="o">=</span> <span class="n">g_ip</span> <span class="o">-</span> <span class="n">g_ip</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>  <span class="c1"># full-sample mean</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">g_ip</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="mi">3</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">demeaned</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="mi">12</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.237
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> -0.0
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>By regime.</strong> Trend growth was higher before 2000. Demeaning each regime by
+its own mean removes the shift that a single mean would leave in:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">regime</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">g_ip</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;</span> <span class="s2">"2000-01-01"</span><span class="p">,</span> <span class="s2">"pre-2000"</span><span class="p">,</span> <span class="s2">"2000+"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">g_ip</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">regime</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">by_regime</span> <span class="o">=</span> <span class="n">g_ip</span> <span class="o">-</span> <span class="n">g_ip</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">regime</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">"mean"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2000+       0.039
+pre-2000    0.302
+Name: INDPRO, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>By calendar month.</strong> Subtracting each month’s average growth removes a
+stable seasonal pattern: a crude seasonal adjustment (chapter 5 does it
+properly).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">g_nsa</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="s2">"RSXFSN"</span><span class="p">))</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span>
+<span class="n">by_month</span> <span class="o">=</span> <span class="n">g_nsa</span> <span class="o">-</span> <span class="n">g_nsa</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">g_nsa</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">"mean"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">g_nsa</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="s2">"-&gt;"</span><span class="p">,</span> <span class="n">by_month</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>  <span class="c1"># most variance was seasonal</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10.08 -&gt; 2.89
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>By unit, in a panel (the within transformation).</strong> With several
+countries in long format, subtract each country’s mean: this is what a
+fixed-effects regression does. Subtracting each period’s cross-country mean
+as well gives the two-way transformation.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">unemp</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">"US"</span><span class="p">:</span> <span class="n">load</span><span class="p">(</span><span class="s2">"UNRATE"</span><span class="p">)</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="s2">"M"</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"Q"</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+            <span class="s2">"PT"</span><span class="p">:</span> <span class="n">load</span><span class="p">(</span><span class="s2">"LRHUTTTTPTQ156S"</span><span class="p">)</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="s2">"Q"</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">"country"</span><span class="p">,</span> <span class="s2">"date"</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">"u"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">"1983"</span><span class="p">:</span><span class="s2">"2019"</span><span class="p">]</span>
+    <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<span class="p">)</span>
+
+<span class="n">unemp</span><span class="p">[</span><span class="s2">"within"</span><span class="p">]</span> <span class="o">=</span> <span class="n">unemp</span><span class="p">[</span><span class="s2">"u"</span><span class="p">]</span> <span class="o">-</span> <span class="n">unemp</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"country"</span><span class="p">)[</span><span class="s2">"u"</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">"mean"</span><span class="p">)</span>
+<span class="n">unemp</span><span class="p">[</span><span class="s2">"two_way"</span><span class="p">]</span> <span class="o">=</span> <span class="n">unemp</span><span class="p">[</span><span class="s2">"within"</span><span class="p">]</span> <span class="o">-</span> <span class="n">unemp</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"date"</span><span class="p">)[</span><span class="s2">"within"</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">"mean"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">unemp</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"country"</span><span class="p">)[[</span><span class="s2">"u"</span><span class="p">,</span> <span class="s2">"within"</span><span class="p">]]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>            u  within
+country              
+PT       8.84    -0.0
+US       6.04     0.0
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Standardizing</strong> divides the demeaned series by its standard deviation
+(EMT <code class="docutils literal notranslate"><span class="pre">standard</span></code>), so series in different units can be compared or combined
+(as the factor model of chapter 8 does):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">zscore</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">s</span> <span class="o">-</span> <span class="n">s</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">s</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+
+
+<span class="n">z</span> <span class="o">=</span> <span class="n">zscore</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">gdp</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>count    318.00
+mean       0.00
+std        1.00
+min       -8.13
+25%       -0.41
+50%        0.01
+75%        0.40
+max        6.09
+Name: GDPC1, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.transform import zscore, demean, within, minmax
+</pre></div>
+</div>
+</div>
+<p>Other common scalings:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scalings</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">"</span><span class="si">% d</span><span class="s2">eviation from mean"</span><span class="p">:</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">ip</span> <span class="o">/</span> <span class="n">ip</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"index, first obs = 100"</span><span class="p">:</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">ip</span> <span class="o">/</span> <span class="n">ip</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s2">"min-max [0, 1]"</span><span class="p">:</span> <span class="p">(</span><span class="n">ip</span> <span class="o">-</span> <span class="n">ip</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">ip</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">ip</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">scalings</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>            % deviation from mean  index, first obs = 100  min-max [0, 1]
+date                                                                     
+2026-08-01                 119.25                 2118.76            0.99
+2026-09-01                 120.71                 2132.80            1.00
+</pre></div>
+</div>
+</div>
+</div>
+<p>Demean and standardize on the <strong>estimation sample</strong> only; reusing
+full-sample moments in a forecasting exercise leaks future information
+(chapter 7’s <code class="docutils literal notranslate"><span class="pre">expanding()</span></code> gives the real-time version). Demeaning a series
+with a trend does not make it stationary: detrend it instead (chapter 6).</p>
+</section>
+<section id="splicing-series-with-a-level-break">
+<h2><span class="section-number">2.7. </span>Splicing series with a level break<a class="headerlink" href="#splicing-series-with-a-level-break" title="Link to this heading">#</a></h2>
+<p>Statistical offices rebase and redefine series. To build one long series,
+<strong>splice</strong> the old one onto the new one using growth rates of the old series
+(ratio splicing). Here we fake a rebased “old” industrial production index.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">old</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.37</span> <span class="o">*</span> <span class="n">ip</span><span class="p">[:</span><span class="s2">"2012"</span><span class="p">])</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">"old"</span><span class="p">)</span>  <span class="c1"># old base, ends 2012</span>
+<span class="n">new</span> <span class="o">=</span> <span class="n">ip</span><span class="p">[</span><span class="s2">"2005"</span><span class="p">:]</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">"new"</span><span class="p">)</span>  <span class="c1"># new base, starts 2005</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ratio_splice</span><span class="p">(</span><span class="n">old</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">at</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Rescale `old` to the level of `new` at the link date and join them."""</span>
+    <span class="n">at</span> <span class="o">=</span> <span class="n">at</span> <span class="ow">or</span> <span class="n">new</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">factor</span> <span class="o">=</span> <span class="n">new</span><span class="p">[</span><span class="n">at</span><span class="p">]</span> <span class="o">/</span> <span class="n">old</span><span class="p">[</span><span class="n">at</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">old</span><span class="p">[</span><span class="n">old</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;</span> <span class="n">at</span><span class="p">]</span> <span class="o">*</span> <span class="n">factor</span><span class="p">,</span> <span class="n">new</span><span class="p">[</span><span class="n">new</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="n">at</span><span class="p">]])</span>
+
+
+<span class="n">long</span> <span class="o">=</span> <span class="n">ratio_splice</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">((</span><span class="n">long</span> <span class="o">/</span> <span class="n">ip</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>  <span class="c1"># 0: growth rates of old preserved</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2.220446049250313e-16
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.transform import ratio_splice
+</pre></div>
+</div>
+</div>
+<p>Link at a single date, or at an average over the overlap
+(<code class="docutils literal notranslate"><span class="pre">new[overlap].mean()</span> <span class="pre">/</span> <span class="pre">old[overlap].mean()</span></code>) when either series is noisy.
+For differences in <strong>levels</strong> (e.g. a percentage), splice additively instead.</p>
+</section>
+<section id="pitfalls">
+<h2><span class="section-number">2.8. </span>Pitfalls<a class="headerlink" href="#pitfalls" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Missing observations.</strong> BLS never published the October 2025 CPI (a
+federal government shutdown), so <code class="docutils literal notranslate"><span class="pre">CPIAUCSL</span></code> has a <code class="docutils literal notranslate"><span class="pre">NaN</span></code> there. pandas 3
+returns <code class="docutils literal notranslate"><span class="pre">NaN</span></code> for any growth rate that touches it; pandas 2 by default
+<em>fills</em> the gap with the previous value and reports a spurious 0% m/m
+change. Pass <code class="docutils literal notranslate"><span class="pre">fill_method=None</span></code> so the code behaves the same in both.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pct_change</span></code> on a series with <em>dropped</em> rows compares across the gap. Call
+<code class="docutils literal notranslate"><span class="pre">.asfreq(...)</span></code> first so that the gap produces <code class="docutils literal notranslate"><span class="pre">NaN</span></code> (chapter 1).</p></li>
+<li><p>Logs of zero or negative numbers (inventories change, net exports) are
+undefined; use differences scaled by a level instead (contributions).</p></li>
+<li><p>Percent vs percentage point: unemployment going from 4% to 5% is a
+1 pp rise and a 25% increase.</p></li>
+</ul>
+</section>
+<section id="summary">
+<h2><span class="section-number">2.9. </span>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Work in <strong>logs × 100</strong> for anything that grows: differences are then
+(approximately) percent changes and trends become linear.</p></li>
+<li><p>Say which growth rate you report: <strong>q/q</strong>, <strong>q/q annualized (SAAR)</strong>,
+<strong>y/y</strong>, or <strong>Q4/Q4</strong>. They answer different questions.</p></li>
+<li><p>US national accounts levels are <strong>already annualized</strong> (SAAR). Divide by
+4 for the quarterly level; average, don’t sum, to get annual values.</p></li>
+</ul>
+</section>
+<section id="exercises">
+<h2><span class="section-number">2.10. </span>Exercises<a class="headerlink" href="#exercises" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Compute q/q, annualized q/q, y/y and 400 × Δlog growth of real GDP (<code class="docutils literal notranslate"><span class="pre">GDPC1</span></code>) for 2008–2010. In which quarter does each measure first turn negative, and in which does it turn positive again? Why does y/y lag the other two?</p></li>
+<li><p>Compute average-over-average and Q4/Q4 real GDP growth for 2007–2011. Use <code class="docutils literal notranslate"><span class="pre">carry_over</span></code> to explain why the two measures tell such different stories about 2009.</p></li>
+<li><p>Build real retail sales as <code class="docutils literal notranslate"><span class="pre">RSXFS</span></code> / <code class="docutils literal notranslate"><span class="pre">CPIAUCSL</span></code>, rebased so that the 2019 average is 100. Compare the y/y growth of nominal and real retail sales in 2021 and 2022: how much of the nominal growth was price increases?</p></li>
+<li><p>Demean monthly industrial production growth (<code class="docutils literal notranslate"><span class="pre">INDPRO</span></code>, 1960–2019) once with the full-sample mean and once by regime (before and after 2000). Compute the first-order autocorrelation of each and explain why a single mean can overstate persistence when the mean shifts.</p></li>
+</ol>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks/02"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../01/dates-frequencies.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">1. </span>Dates, periods and frequencies</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../03/aggregation.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">3. </span>Temporal aggregation: from high to low frequency</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#growth-rates">2.1. Growth rates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#annual-growth-average-over-average-vs-q4-q4">2.2. Annual growth: average-over-average vs Q4/Q4</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#carry-over-statistical-overhang">2.3. Carry-over (statistical overhang)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rebasing-an-index">2.4. Rebasing an index</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nominal-to-real-deflating">2.5. Nominal to real: deflating</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demeaning-standardizing-and-scaling">2.6. Demeaning, standardizing and scaling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#splicing-series-with-a-level-break">2.7. Splicing series with a level break</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfalls">2.8. Pitfalls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">2.9. Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">2.10. Exercises</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Hugo Morão
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

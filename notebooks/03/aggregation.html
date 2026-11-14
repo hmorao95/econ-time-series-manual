@@ -1,0 +1,966 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>3. Temporal aggregation: from high to low frequency &#8212; Economic Time Series in Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/03/aggregation';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="4. Interpolation and temporal disaggregation" href="../04/interpolation.html" />
+    <link rel="prev" title="2. Transformations: logs, growth rates, indices, deflators" href="../02/transformations.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../00/intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Economic Time Series in Python</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapters</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01/dates-frequencies.html">1. Dates, periods and frequencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02/transformations.html">2. Transformations: logs, growth rates, indices, deflators</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">3. Temporal aggregation: from high to low frequency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04/interpolation.html">4. Interpolation and temporal disaggregation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05/seasonal-adjustment.html">5. Seasonal adjustment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06/detrending.html">6. Detrending and filtering: trend and cycle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../07/rolling-smoothing.html">7. Rolling windows, smoothing, lags and leads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../08/business-cycles.html">8. Business cycles: turning points and stylized facts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../09/diagnostics.html">9. Diagnostics: stationarity, autocorrelation, outliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../10/crisis-dummies.html">10. Crisis dummies and recession bands: Portugal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../11/paper-figures.html">11. Paper-quality figures: impulse responses and decompositions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00/toolkit.html">The <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../00/cheatsheet.html">Cheat sheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../00/knowledge_test.html">Knowledge test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../00/resources.html">Resources</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/hmorao95/econ-time-series-manual/blob/main/notebooks/03/aggregation.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/hmorao95/econ-time-series-manual" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/hmorao95/econ-time-series-manual/issues/new?title=Issue%20on%20page%20%2Fnotebooks/03/aggregation.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/notebooks/03/aggregation.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Temporal aggregation: from high to low frequency</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-basic-pattern">3.1. The basic pattern</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#incomplete-periods">3.2. Incomplete periods</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stocks-end-of-period-vs-average">3.3. Stocks: end of period vs average</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#saar-flows">3.4. SAAR flows</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#weekly-to-monthly">3.5. Weekly to monthly</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fiscal-years-and-custom-periods">3.6. Fiscal years and custom periods</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#monthly-to-quarterly-every-option">3.7. Monthly to quarterly, every option</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfalls">3.8. Pitfalls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">3.9. Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">3.10. Exercises</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="temporal-aggregation-from-high-to-low-frequency">
+<h1><span class="section-number">3. </span>Temporal aggregation: from high to low frequency<a class="headerlink" href="#temporal-aggregation-from-high-to-low-frequency" title="Link to this heading">#</a></h1>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Setup: install the toolkit when running on Google Colab, and a plotting style</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="k">if</span> <span class="s2">"google.colab"</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+    <span class="o">%</span><span class="k">pip</span> install -q "econts[book] @ git+https://github.com/hmorao95/econ-time-series-manual"
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    <span class="s2">"figure.figsize"</span><span class="p">:</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">3.6</span><span class="p">),</span> <span class="s2">"axes.grid"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"grid.alpha"</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="s2">"axes.spines.top"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"axes.spines.right"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"legend.frameon"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<p>Going from daily to monthly, or monthly to quarterly, is a one-liner with
+<code class="docutils literal notranslate"><span class="pre">resample</span></code>. The economics is in choosing the <strong>aggregation rule</strong>, which
+depends on what the series measures.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">econts</span><span class="w"> </span><span class="kn">import</span> <span class="n">load</span>
+
+<span class="n">retail</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"RSXFS"</span><span class="p">)</span>  <span class="c1"># monthly flow, $ millions</span>
+<span class="n">payems</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"PAYEMS"</span><span class="p">)</span>  <span class="c1"># monthly employment level</span>
+<span class="n">unrate</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"UNRATE"</span><span class="p">)</span>  <span class="c1"># monthly rate</span>
+<span class="n">brent</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"DCOILBRENTEU"</span><span class="p">)</span>  <span class="c1"># daily price</span>
+<span class="n">claims</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"ICSA"</span><span class="p">)</span>  <span class="c1"># weekly flow, weeks ending Saturday</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="the-basic-pattern">
+<h2><span class="section-number">3.1. </span>The basic pattern<a class="headerlink" href="#the-basic-pattern" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">resample</span></code> takes a frequency alias (chapter 1) and an aggregation. With
+start-of-period aliases (<code class="docutils literal notranslate"><span class="pre">QS</span></code>, <code class="docutils literal notranslate"><span class="pre">YS</span></code>) the result keeps FRED’s labelling; with
+<code class="docutils literal notranslate"><span class="pre">PeriodIndex</span></code> input you get periods back.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">q</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">"retail (sum)"</span><span class="p">:</span> <span class="n">retail</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"QS"</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">min_count</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+        <span class="s2">"payrolls (mean)"</span><span class="p">:</span> <span class="n">payems</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"QS"</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+        <span class="s2">"payrolls (end)"</span><span class="p">:</span> <span class="n">payems</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"QS"</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">(),</span>
+        <span class="s2">"unrate (mean)"</span><span class="p">:</span> <span class="n">unrate</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"QS"</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"2025"</span><span class="p">:]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="c1"># Same thing on periods</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">unrate</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="s2">"M"</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"Q"</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>            retail (sum)  payrolls (mean)  payrolls (end)  unrate (mean)
+date                                                                    
+2025-01-01     1812501.0         158318.3        158377.0            4.1
+2025-04-01     1814141.0         158487.0        158478.0            4.2
+2025-07-01     1839756.0         158520.7        158548.0            4.3
+2025-10-01     1851051.0         158429.7        158432.0            4.4
+2026-01-01     1867151.0         158559.3        158650.0            4.3
+2026-04-01     1919897.0         158850.3        158892.0            4.3
+2026-07-01     1938818.0         158980.3        159044.0            4.1
+date
+2026Q2    4.266667
+2026Q3    4.133333
+Freq: Q-DEC, Name: UNRATE, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">sum</span></code> returns 0 for an empty period and would happily sum two months of a
+three-month quarter. <code class="docutils literal notranslate"><span class="pre">min_count=3</span></code> returns <code class="docutils literal notranslate"><span class="pre">NaN</span></code> instead, which is what you
+want for the last, incomplete quarter.</p>
+</section>
+<section id="incomplete-periods">
+<h2><span class="section-number">3.2. </span>Incomplete periods<a class="headerlink" href="#incomplete-periods" title="Link to this heading">#</a></h2>
+<p>A general guard: aggregate the observation count alongside the value, and mask
+periods with too few observations.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">aggregate</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">freq</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">how</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"mean"</span><span class="p">,</span> <span class="n">min_obs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Resample `s` with `how`, setting periods with &lt; `min_obs` values to NaN."""</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">how</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">min_obs</span><span class="p">)</span>
+
+
+<span class="n">brent_m</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">brent</span><span class="p">,</span> <span class="s2">"MS"</span><span class="p">,</span> <span class="s2">"mean"</span><span class="p">,</span> <span class="n">min_obs</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">brent_m</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>  <span class="c1"># current month is NaN until 15 trading days exist</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>date
+2026-09-01    114.16
+2026-10-01    123.93
+2026-11-01       NaN
+Freq: MS, Name: DCOILBRENTEU, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.aggregate import aggregate
+</pre></div>
+</div>
+</div>
+<p>For daily prices, also choose the <strong>concept</strong>: the monthly average
+(<code class="docutils literal notranslate"><span class="pre">mean</span></code>), the end-of-month price (<code class="docutils literal notranslate"><span class="pre">last</span></code>), or the full open/high/low/close:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">brent</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"MS"</span><span class="p">)</span><span class="o">.</span><span class="n">ohlc</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"2026"</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>              open    high     low   close
+date                                      
+2026-09-01   96.02  130.80   96.02  115.91
+2026-10-01  114.82  135.51  114.82  120.15
+2026-11-01  107.39  107.39  107.03  107.03
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="stocks-end-of-period-vs-average">
+<h2><span class="section-number">3.3. </span>Stocks: end of period vs average<a class="headerlink" href="#stocks-end-of-period-vs-average" title="Link to this heading">#</a></h2>
+<p>Payroll employment is a level; the quarterly figure can be the average of the
+three months (BLS and BEA convention) or the March/June/September/December
+value. The difference matters around turning points:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gap</span> <span class="o">=</span> <span class="n">q</span><span class="p">[</span><span class="s2">"payrolls (end)"</span><span class="p">]</span> <span class="o">-</span> <span class="n">q</span><span class="p">[</span><span class="s2">"payrolls (mean)"</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">gap</span><span class="p">[</span><span class="s2">"2020"</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>  <span class="c1"># thousands: about 4 million jobs in 2020Q2</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>date
+2020-01-01    -845.0
+2020-04-01    3959.0
+2020-07-01    1155.0
+2020-10-01     -32.0
+Freq: QS-JAN, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="saar-flows">
+<h2><span class="section-number">3.4. </span>SAAR flows<a class="headerlink" href="#saar-flows" title="Link to this heading">#</a></h2>
+<p>US national-accounts flows are annualized. The annual value is the <strong>mean</strong>
+of the four quarters, not the sum (the sum would be four times too large).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gdp</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">"GDPC1"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">gdp</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"YS"</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"2023"</span><span class="p">:</span><span class="s2">"2025"</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>date
+2023-01-01    22724.0
+2024-01-01    23395.0
+2025-01-01    23943.0
+Freq: YS-JAN, Name: GDPC1, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<p>For non-annualized quarterly flows (most European national accounts), sum.</p>
+</section>
+<section id="weekly-to-monthly">
+<h2><span class="section-number">3.5. </span>Weekly to monthly<a class="headerlink" href="#weekly-to-monthly" title="Link to this heading">#</a></h2>
+<p>Weeks straddle month boundaries. Resampling by the week-ending date puts
+all of the week Sunday 30 March to Saturday 5 April into April. For a flow
+like jobless claims, spread each week over its seven days and sum by month:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">weekly_flow_to_monthly</span><span class="p">(</span><span class="n">w</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Distribute each weekly total evenly over its days, then sum by month."""</span>
+    <span class="n">days</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">6</span><span class="p">),</span> <span class="n">w</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">freq</span><span class="o">=</span><span class="s2">"D"</span><span class="p">)</span>
+    <span class="n">daily</span> <span class="o">=</span> <span class="p">(</span><span class="n">w</span> <span class="o">/</span> <span class="mi">7</span><span class="p">)</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"bfill"</span><span class="p">)</span>  <span class="c1"># each day gets 1/7 of its week</span>
+    <span class="n">monthly</span> <span class="o">=</span> <span class="n">daily</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"MS"</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">monthly</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># drop partial first/last months</span>
+
+
+<span class="n">naive</span> <span class="o">=</span> <span class="n">claims</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"MS"</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">exact</span> <span class="o">=</span> <span class="n">weekly_flow_to_monthly</span><span class="p">(</span><span class="n">claims</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">"by week-end date"</span><span class="p">:</span> <span class="n">naive</span><span class="p">,</span> <span class="s2">"day-weighted"</span><span class="p">:</span> <span class="n">exact</span><span class="p">})</span>
+    <span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"2025-01"</span><span class="p">:</span><span class="s2">"2025-06"</span><span class="p">]</span>
+    <span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>            by week-end date  day-weighted
+2025-01-01          860000.0      960000.0
+2025-02-01          900000.0      903000.0
+2025-03-01         1115000.0      987000.0
+2025-04-01          903000.0      970000.0
+2025-05-01         1159000.0     1029000.0
+2025-06-01          956000.0     1021000.0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">In your projects</p>
+<p>The same recipe is in the <code class="docutils literal notranslate"><span class="pre">econts</span></code> toolkit:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from econts.aggregate import weekly_to_monthly
+</pre></div>
+</div>
+</div>
+<p>For a weekly <em>average</em> concept (a rate, a price), use the day-weighted
+<code class="docutils literal notranslate"><span class="pre">mean</span></code> instead of <code class="docutils literal notranslate"><span class="pre">sum</span></code>.</p>
+</section>
+<section id="fiscal-years-and-custom-periods">
+<h2><span class="section-number">3.6. </span>Fiscal years and custom periods<a class="headerlink" href="#fiscal-years-and-custom-periods" title="Link to this heading">#</a></h2>
+<p>Anchored aliases do fiscal years directly. A fiscal year ending in September
+(the US federal year) labelled by the year in which it ends:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fy</span> <span class="o">=</span> <span class="n">retail</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"YE-SEP"</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">min_count</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">fy</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>date
+2024-09-30    7036000.0
+2025-09-30    7275000.0
+2026-09-30    7577000.0
+Freq: YE-SEP, Name: RSXFS, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<p>Any custom grouping works with <code class="docutils literal notranslate"><span class="pre">groupby</span></code>, e.g. half-years:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">half</span> <span class="o">=</span> <span class="n">retail</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">retail</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="p">(</span><span class="n">retail</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">6</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+    <span class="n">min_count</span><span class="o">=</span><span class="mi">6</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">half</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>date  date
+2025  1       3626642.0
+      2       3690807.0
+2026  1       3787048.0
+      2             NaN
+Name: RSXFS, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="monthly-to-quarterly-every-option">
+<h2><span class="section-number">3.7. </span>Monthly to quarterly, every option<a class="headerlink" href="#monthly-to-quarterly-every-option" title="Link to this heading">#</a></h2>
+<p>The Empirical Macro Toolbox’s <code class="docutils literal notranslate"><span class="pre">m2q</span></code> offers mean, median, start and end of
+quarter. In pandas:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">m2q</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="n">rule</span><span class="p">:</span> <span class="n">unrate</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">"QS"</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"mean"</span><span class="p">,</span> <span class="s2">"median"</span><span class="p">,</span> <span class="s2">"first"</span><span class="p">,</span> <span class="s2">"last"</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">m2q</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"2020"</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>            mean  median  first  last
+date                                 
+2020-01-01   3.8     3.6    3.6   4.4
+2020-04-01  13.0    13.2   14.8  11.0
+2020-07-01   8.8     8.4   10.2   7.8
+2020-10-01   6.8     6.7    6.9   6.7
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="pitfalls">
+<h2><span class="section-number">3.8. </span>Pitfalls<a class="headerlink" href="#pitfalls" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Aggregating growth rates is not aggregating levels. Aggregate the levels,
+then compute the growth rate.</p></li>
+<li><p>Averaging a ratio (e.g. debt/GDP) is not the ratio of averages. Aggregate
+numerator and denominator separately.</p></li>
+<li><p>Temporal aggregation changes the dynamics: averaging introduces an MA
+component and smooths turning points (Working, 1960). Keep this in mind
+before reading persistence off quarterly averages of monthly data.</p></li>
+</ul>
+</section>
+<section id="summary">
+<h2><span class="section-number">3.9. </span>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>The series is a…</p></th>
+<th class="head"><p>Example</p></th>
+<th class="head"><p>Aggregate with</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>flow</strong> (amount per period)</p></td>
+<td><p>retail sales, claims, exports</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sum</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>flow at an annual rate</strong> (SAAR)</p></td>
+<td><p>US GDP, housing starts</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mean</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>stock</strong> (level at a date)</p></td>
+<td><p>debt, money stock, inventories</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">last</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>average / rate / price / index</strong></p></td>
+<td><p>unemployment rate, CPI, oil price</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mean</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Count observations per period and drop periods that are incomplete.</p>
+</section>
+<section id="exercises">
+<h2><span class="section-number">3.10. </span>Exercises<a class="headerlink" href="#exercises" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Compute annual real GDP for the US (<code class="docutils literal notranslate"><span class="pre">GDPC1</span></code>) and for Portugal (<code class="docutils literal notranslate"><span class="pre">CLVMNACSCAB1GQPT</span></code>) for 2015–2025. One needs <code class="docutils literal notranslate"><span class="pre">mean</span></code> and the other <code class="docutils literal notranslate"><span class="pre">sum</span></code>: which is which, and how do you check this from the FRED units?</p></li>
+<li><p>Aggregate payroll employment (<code class="docutils literal notranslate"><span class="pre">PAYEMS</span></code>) to quarters as the three-month average and as the end-of-quarter value for 2008–2010. Compute q/q growth of both: in which quarter does each series reach its trough, and why do they differ?</p></li>
+<li><p>Convert weekly jobless claims (<code class="docutils literal notranslate"><span class="pre">ICSA</span></code>) to monthly totals with the naive week-ending rule and with the day-weighted function, for January–June 2020. How large is the misallocation in March and April 2020, and in which direction?</p></li>
+<li><p>Build monthly Brent (<code class="docutils literal notranslate"><span class="pre">DCOILBRENTEU</span></code>) as the monthly average and as the end-of-month price for 2000–2019, and compute the first-order autocorrelation of the monthly log changes of each. Does the averaged series show the positive autocorrelation that Working (1960) predicts for an averaged random walk, and what does this imply for a VAR estimated on monthly averages?</p></li>
+</ol>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks/03"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../02/transformations.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">2. </span>Transformations: logs, growth rates, indices, deflators</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../04/interpolation.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">4. </span>Interpolation and temporal disaggregation</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-basic-pattern">3.1. The basic pattern</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#incomplete-periods">3.2. Incomplete periods</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stocks-end-of-period-vs-average">3.3. Stocks: end of period vs average</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#saar-flows">3.4. SAAR flows</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#weekly-to-monthly">3.5. Weekly to monthly</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fiscal-years-and-custom-periods">3.6. Fiscal years and custom periods</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#monthly-to-quarterly-every-option">3.7. Monthly to quarterly, every option</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfalls">3.8. Pitfalls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">3.9. Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">3.10. Exercises</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Hugo Morão
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
