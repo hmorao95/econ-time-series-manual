@@ -34,4 +34,12 @@ Conventions:
   dev dependency; the toolkit itself must not import it.
 - Supported: Python >= 3.10, pandas 2.2+ and 3.x, statsmodels >= 0.15. Write
   code that behaves the same on pandas 2 and 3 (e.g. `pct_change(fill_method=None)`).
+- `.python-version` pins the local environment to Python 3.12, the oldest
+  version that reads `.pth` files as UTF-8. On Windows, 3.10 and 3.11 read them
+  in the ANSI code page, so the editable install breaks when the clone's path
+  has non-ASCII characters and `import econts` fails. The supported floor is
+  still 3.10: CI picks each job's Python with setup-uv's `python-version`
+  input, which sets `UV_PYTHON`. Keep it that way. A `--python` flag on
+  `uv sync` alone does not hold, because the next `uv run` reads
+  `.python-version` and rebuilds `.venv` on 3.12.
 - Workflow: branch, PR, squash-merge when CI is green.

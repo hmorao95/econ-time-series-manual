@@ -174,6 +174,15 @@ Notebooks are stored with their outputs. Refreshing the data can change
 numbers quoted in the text (FRED revises history): re-run the notebooks and
 reread the quoted figures afterwards.
 
+In a clone, `uv sync` uses Python 3.12, set in `.python-version` (uv downloads
+it if needed). On Windows, avoid 3.10 and 3.11 in a clone whose path has
+non-ASCII characters, such as `C:\Users\João\...`. Those versions read the
+editable install's `.pth` file in the ANSI code page, so the path comes out
+garbled and `import econts` fails with `ModuleNotFoundError`. On 3.10, setting
+`PYTHONUTF8=1` fixes it. On 3.11 it does not, so move the clone to an
+ASCII-only path or set `PYTHONPATH=src`. A regular, non-editable install is not
+affected.
+
 ## Credits
 
 The structure follows Filippo Maria Bianchi's
